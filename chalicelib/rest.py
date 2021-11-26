@@ -1,0 +1,34 @@
+import random
+import re
+import os
+
+from chalicelib.config import Config
+
+class Rest():
+
+    def __init__(self, parent_pomodoro) -> None:
+        self.rest_messages = []
+        self.load_rest_messages()
+        self.rest_started = False
+        self.parent_pomodoro = parent_pomodoro
+  
+
+    def load_rest_messages(self) -> None:
+        with open(Config.REST_MESSAGES_FILE_PATH, 'r', encoding='UTF8') as f:
+            lines = f.readlines()
+            for line in lines:
+                self.rest_messages.append(re.sub(r'[\n]', '', line))
+
+    def random_message(self) -> str:
+        return random.choice(self.rest_messages)
+
+    def start(self) -> None:
+        ''' fires when pomodoros' 25 minutes ends and rest time for 5 minutes starts '''
+
+        if self.rest_started:
+            return # return early to prevent multiple notifications
+
+        msg = f'{ self.random_message() }'
+        print(msg)
+
+        self.rest_started = True
