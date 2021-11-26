@@ -5,6 +5,8 @@ from chalicelib.misc import midnight_fix
 
 from chalicelib.config import Config
 
+from chalicelib.telegram import send_telegram_message
+
 class Pomodoro():
     def __init__(self, rawrow: str) -> None:
 
@@ -38,7 +40,9 @@ class Pomodoro():
 
     def start_routine(self) -> None:
         # print('> start routine', self.description)
+        send_telegram_message(self.description)
         self.active = True
+
     
     def end_routine(self) -> None:
         # print('> end routine', self.description)

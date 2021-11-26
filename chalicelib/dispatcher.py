@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from chalicelib.ssm_parameter import SSMParameter
+
 from chalicelib.pomodoro import Pomodoro
 from chalicelib.misc import midnight_fix
 
@@ -52,12 +54,15 @@ class Dispatcher():
             self.previous_pomodoro = self.active_pomodoro
         
         self.active_pomodoro = pomodoro
-        self.active_pomodoro.start_routine()
+        # self.active_pomodoro.start_routine()
+        pomodoro.start_routine()
         print('pomodoro run', pomodoro.description)
 
-    def tick(self, time = None) -> None:
+    def tick(self, time = None):
         if not time:
             time = datetime.now().strftime('%H%M')
+
+        # print('input-time:', time)
 
         time = midnight_fix(time)
 
@@ -66,4 +71,19 @@ class Dispatcher():
             if active_minutes >= self.active_pomodoro.duration:
                 self.active_pomodoro.rest.start()
 
-        self.run_pomodoro(self.get_pomodoro(time))
+        p = self.get_pomodoro(time)
+        if p:
+            self.check_and_fire(p)
+
+        # if time == cp.startint:
+            # self.run_pomodoro(cp)
+
+        # self.run_pomodoro()
+
+    def check_and_fire(self, pomodoro: Pomodoro) -> None:
+
+        if SSMParameter.get() == pomodoro.fingerprint:
+            return
+
+        SSMParameter.save(pomodoro.fingerprint)
+        self.run_pomodoro(pomodoro)

@@ -8,6 +8,9 @@ class Config:
 
     SECRETS_ENV_PATH = f'{Path.cwd()}/chalicelib/.env.secrets'
 
+    SSM_PARAMETER_LAST_POMODORO = 'pomodoro_last'
+
+
     SCHEDULE_FILE_PATH = f'{Path.cwd()}/chalicelib/schedule/schedule.txt'
     REST_MESSAGES_FILE_PATH = f'{Path.cwd()}/chalicelib/schedule/rest_messages.txt'
 

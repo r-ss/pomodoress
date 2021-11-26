@@ -1,8 +1,8 @@
 import random
 import re
-import os
 
 from chalicelib.config import Config
+from chalicelib.telegram import send_telegram_message
 
 class Rest():
 
@@ -29,6 +29,7 @@ class Rest():
             return # return early to prevent multiple notifications
 
         msg = f'{ self.random_message() }'
-        print(msg)
+        # print(msg)
+        send_telegram_message(msg)
 
         self.rest_started = True

@@ -54,8 +54,17 @@ def test_many_ticks():
     with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )
 
-    for t in range(600, 3000):
-        ds.tick( str(t) )
+    a = 600
+    z = 3000
+    t = 30
+
+    counter = 0
+
+    for i in range(int(a/t), int(z/t)):
+        ds.tick( str(i*t) )
+        counter+=1
+
+    print('counter:', counter)
 
     
     # assert ds.active_pomodoro.fingerprint == 'fingerprint 0:00 - 0:30 - free time'
