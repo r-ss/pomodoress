@@ -9,15 +9,14 @@ import pytz
 
 class Config:
 
+    APP_NAME = 'pomodoress'
+
     TESTING_MODE = False
-    PRODUCTION = False
+    # PRODUCTION = True
 
     SECRETS_ENV_PATH = f'{Path.cwd()}/chalicelib/.env.secrets'
 
     SSM_PARAMETER_LAST_POMODORO = 'pomodoro_last'
-
-    # AWS_SSM_ENABLED = False
-    # TELEGRAM_ENABLED = False  # Not send actual telegram messages if True
 
     AWS_SSM_ENABLED = True
     TELEGRAM_ENABLED = True  # Not send actual telegram messages if False

@@ -32,9 +32,7 @@ class Dispatcher():
             self.pomodoros[i].next = self.pomodoros[i + 1]
 
         
-
     def get_pomodoro(self, time):
-
         for p in self.pomodoros:
             if p.startint <= time and p.endint > time:
                 return p
@@ -71,12 +69,8 @@ class Dispatcher():
 
         time = current_time(forcedtime)
 
-        # time = midnight_fix(time)
-
         if self.active_pomodoro:
-            
             active_minutes = int(time) - self.active_pomodoro.startint
-            # print(active_minutes)
             if active_minutes >= self.active_pomodoro.duration:
                 self.active_pomodoro.rest.start()
 

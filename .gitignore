@@ -7,3 +7,6 @@ __pycache__
 
 # secrets file
 .env.secrets
+
+# snippets
+commands.txt

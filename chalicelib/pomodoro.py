@@ -48,15 +48,11 @@ class Pomodoro():
 
     def start_routine(self) -> None:
         # print('> start routine', self.description)
-        # if 'free' in self.text and 'free' in self.previous.text:
-        #     self.active = True
-        #     return
 
         # not send notification if we have long uuproductive activities in a row
         if any(w in self.text for w in Config.UNPRODUCTIVE_ACTIVITIES) and any(z in self.previous.text for z in Config.UNPRODUCTIVE_ACTIVITIES):
             self.rest_started = True
             return
-
 
 
         send_telegram_message(f'{self.emoji} {self.start} - {self.formtext}')

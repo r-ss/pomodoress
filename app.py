@@ -9,7 +9,7 @@ from chalicelib.info import readinfo
 
 load_dotenv(dotenv_path=Config.SECRETS_ENV_PATH)
 
-app = Chalice(app_name='ress_pomodoros')
+app = Chalice(app_name=Config.APP_NAME)
 
 ds = Dispatcher()
 ds.load_schedule()

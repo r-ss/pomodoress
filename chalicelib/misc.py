@@ -18,8 +18,6 @@ def current_time(forcedtime = None):
     if forcedtime:
         return midnight_fix(forcedtime)
     time = datetime.now(Config.TZ)
-    # time = Config.TZ.localize(time)
     time = time.strftime('%H%M')
     time = midnight_fix(time)
     return time
-    # return int('1300')

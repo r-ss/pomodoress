@@ -18,7 +18,7 @@ def readinfo():
     load1, load5, load15 = os.getloadavg()
 
     return {
-        'resource': 'pomodoress',
+        'resource': Config.APP_NAME,
         'datetime_now': datetime.now().strftime('%d %B %Y %H:%M:%S'),
         'datetime_utcnow': datetime.utcnow().strftime('%d %B %Y %H:%M:%S'),
         'special_current_time': current_time(),
