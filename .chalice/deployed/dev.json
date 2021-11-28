@@ -1,5 +1,33 @@
 {
-  "resources": [],
+  "resources": [
+    {
+      "name": "default-role",
+      "resource_type": "iam_role",
+      "role_arn": "arn:aws:iam::640201179888:role/ress_pomodoros-dev",
+      "role_name": "ress_pomodoros-dev"
+    },
+    {
+      "name": "sendcurrent_cron",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:eu-north-1:640201179888:function:ress_pomodoros-dev-sendcurrent_cron"
+    },
+    {
+      "name": "sendcurrent_cron-event",
+      "resource_type": "cloudwatch_event",
+      "rule_name": "ress_pomodoros-dev-sendcurrent_cron-event"
+    },
+    {
+      "name": "api_handler",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:eu-north-1:640201179888:function:ress_pomodoros-dev"
+    },
+    {
+      "name": "rest_api",
+      "resource_type": "rest_api",
+      "rest_api_id": "iqmfsyla21",
+      "rest_api_url": "https://iqmfsyla21.execute-api.eu-north-1.amazonaws.com/api/"
+    }
+  ],
   "schema_version": "2.0",
   "backend": "api"
 }

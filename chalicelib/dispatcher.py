@@ -23,9 +23,15 @@ class Dispatcher():
         for line in raw_lines:
             self.pomodoros.append(Pomodoro(line))
 
+        # filling .previous value in every pomodoro
+        for i in range(1, len(self.pomodoros)):
+            self.pomodoros[i].previous = self.pomodoros[i - 1]
+
         # filling .next value in every pomodoro
         for i in range(len(self.pomodoros) - 1):
             self.pomodoros[i].next = self.pomodoros[i + 1]
+
+        
 
     def get_pomodoro(self, time):
 
@@ -117,30 +123,16 @@ class Dispatcher():
         if self.reformatted:
             return
 
-        print('REFORMAT')
         l = len(self.pomodoros)
         for i in range(len(self.pomodoros)):
             p = self.pomodoros[i]
 
-            # if p.next:
-            #     if p.next.text == p.text:
-            #         n = self.pomodoros[i+1]
-            #         n.text = f'X {n.text}'
-            # if p.active:
-            
-            # n = self.pomodoros[ i + min(1, l - i) -1 ]
-            # if n.text == p.text:
-            #     # pass
-            #     n.text = f'P{n.text}'
-            # print( min(4, l - i) )
             for j in range( min(20, l - i) ):
                 if i+j+1 >= l:
                     continue
                 
                 n = self.pomodoros[i+j+1]
-            #     # # pp = self.pomodoros[i-1]
                 if n.text == p.text:
-            #         # print('---- ------')
                     if not n.reformatted:
                         n.reformatted_text = f'{n.text}...'
                         n.reformatted = True                    

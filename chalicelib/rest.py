@@ -26,7 +26,7 @@ class Rest():
         if self.parent_pomodoro.next.text == self.parent_pomodoro.text:
             return ''
 
-        line = f', next: {self.parent_pomodoro.next.text}'
+        line = f' next: {self.parent_pomodoro.next.text}'
 
         return line
 
@@ -36,5 +36,15 @@ class Rest():
         if self.rest_started:
             return # return early to prevent multiple notifications
 
-        send_telegram_message(f'                                                          {self.random_message()}{self.next_announce}\n------- ------- ------- ------- ------- ------- ------- ------- ')
+        # do we actually need rest here? If we have free time, no need to announce Rest
+        if any(w in self.parent_pomodoro.text for w in Config.UNPRODUCTIVE_ACTIVITIES):
+            self.rest_started = True
+            return
+
+        # also not send rest announces before 10:00
+        if self.parent_pomodoro.startint < 1000:
+            self.rest_started = True
+            return
+
+        send_telegram_message(f'{self.random_message()}{self.next_announce}')
         self.rest_started = True

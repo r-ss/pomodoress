@@ -49,7 +49,7 @@ def test_tick():
     ds.tick( str(2400) )
     assert ds.active_pomodoro.fingerprint == 'fingerprint 0:00 - 0:30 - free time'
 
-def test_many_ticks():
+def test_many_ticks(client):
     ds = Dispatcher()
     with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )

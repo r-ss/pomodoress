@@ -16,8 +16,11 @@ class Config:
 
     SSM_PARAMETER_LAST_POMODORO = 'pomodoro_last'
 
+    # AWS_SSM_ENABLED = False
+    # TELEGRAM_ENABLED = False  # Not send actual telegram messages if True
+
     AWS_SSM_ENABLED = True
-    TELEGRAM_ENABLED = True  # Not send actual telegram messages if True
+    TELEGRAM_ENABLED = True  # Not send actual telegram messages if False
 
     SCHEDULE_FILE_PATH = f'{Path.cwd()}/chalicelib/schedule/schedule.txt'
     REST_MESSAGES_FILE_PATH = f'{Path.cwd()}/chalicelib/schedule/rest_messages.txt'
@@ -28,4 +31,7 @@ class Config:
     # Default Pomodoro duration, in minutes
     POMODORO_DURATION = 25
 
+    UNPRODUCTIVE_ACTIVITIES = ['free', 'dinner', 'netflix']
+
     TZ = pytz.timezone('Europe/Moscow')
+    
