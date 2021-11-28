@@ -1,10 +1,10 @@
 from typing import Union
+from datetime import datetime
+
+from chalicelib.config import Config
 
 def midnight_fix(time: Union[int, str]) -> int:
     ''' recieves time in String or Int. Converting to Int, simple fix midnight problem - 00:00 as 0 and terurns as int '''
-
-    # Union[int, str] means argument can be either int or str
-
     if type(time) == str:
         time = int(time.replace(':', ''))
 
@@ -13,3 +13,13 @@ def midnight_fix(time: Union[int, str]) -> int:
     if time < 500:
         time += 2400
     return time
+
+def current_time(forcedtime = None):
+    if forcedtime:
+        return midnight_fix(forcedtime)
+    time = datetime.now(Config.TZ)
+    # time = Config.TZ.localize(time)
+    time = time.strftime('%H%M')
+    time = midnight_fix(time)
+    return time
+    # return int('1300')

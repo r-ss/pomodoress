@@ -1,4 +1,7 @@
 from pathlib import Path
+import pytz
+
+
 
 # sheet_id = '16MvAmxu2gzrRYGyepzxe19w7zKr8Zr8RIB898bQBTIs'
 # sheet_name = 'home'
@@ -6,17 +9,23 @@ from pathlib import Path
 
 class Config:
 
+    TESTING_MODE = False
+    PRODUCTION = False
+
     SECRETS_ENV_PATH = f'{Path.cwd()}/chalicelib/.env.secrets'
 
     SSM_PARAMETER_LAST_POMODORO = 'pomodoro_last'
 
+    AWS_SSM_ENABLED = True
+    TELEGRAM_ENABLED = True  # Not send actual telegram messages if True
 
     SCHEDULE_FILE_PATH = f'{Path.cwd()}/chalicelib/schedule/schedule.txt'
     REST_MESSAGES_FILE_PATH = f'{Path.cwd()}/chalicelib/schedule/rest_messages.txt'
 
-
-    # interval between Dispatch.tick() events, in seconds
-    TICK_INTERVAL = 2
+    # Rate to invoke main app, in minutes
+    TICK_INTERVAL = 1  
 
     # Default Pomodoro duration, in minutes
     POMODORO_DURATION = 25
+
+    TZ = pytz.timezone('Europe/Moscow')

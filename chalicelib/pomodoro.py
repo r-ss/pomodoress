@@ -2,9 +2,7 @@ import re
 
 from chalicelib.rest import Rest
 from chalicelib.misc import midnight_fix
-
 from chalicelib.config import Config
-
 from chalicelib.telegram import send_telegram_message
 
 class Pomodoro():
@@ -26,6 +24,8 @@ class Pomodoro():
         self.fingerprint = f'fingerprint {self.start} - {self.end} - {self.text}'
 
         self.active = False
+        self.reformatted = False
+        self.reformatted_text = self.text
         # self.notified = False # marks when notification sends to user
 
         # Rest object is in response for 5-minutes resting time window when pomodoros 25 minutes passes
@@ -34,9 +34,16 @@ class Pomodoro():
         self.duration = Config.POMODORO_DURATION # default pomodoro duration 25 minutes
         self.next = None # next Pomodoro in timed queue
 
+
     @property
     def description(self) -> str:
-        return f'Pomodoro - {self.start} - {self.end}, {self.emoji} {self.text}'
+        return f'{self.emoji} {self.start} - {self.end} - {self.formtext}'
+
+    @property
+    def formtext(self) -> str:
+        if self.reformatted:
+            return self.reformatted_text
+        return self.text
 
     def start_routine(self) -> None:
         # print('> start routine', self.description)

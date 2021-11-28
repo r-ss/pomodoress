@@ -2,3 +2,4 @@ pytest
 python-dotenv
 telebot
 boto3
+pytz

@@ -12,7 +12,6 @@ class Rest():
         self.rest_started = False
         self.parent_pomodoro = parent_pomodoro
   
-
     def load_rest_messages(self) -> None:
         with open(Config.REST_MESSAGES_FILE_PATH, 'r', encoding='UTF8') as f:
             lines = f.readlines()
@@ -22,14 +21,20 @@ class Rest():
     def random_message(self) -> str:
         return random.choice(self.rest_messages)
 
+    @property
+    def next_announce(self) -> str:
+        if self.parent_pomodoro.next.text == self.parent_pomodoro.text:
+            return ''
+
+        line = f', next: {self.parent_pomodoro.next.text}'
+
+        return line
+
     def start(self) -> None:
         ''' fires when pomodoros' 25 minutes ends and rest time for 5 minutes starts '''
 
         if self.rest_started:
             return # return early to prevent multiple notifications
 
-        msg = f'{ self.random_message() }'
-        # print(msg)
-        send_telegram_message(msg)
-
+        send_telegram_message(f'                                                          {self.random_message()}{self.next_announce}\n------- ------- ------- ------- ------- ------- ------- ------- ')
         self.rest_started = True

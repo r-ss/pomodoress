@@ -56,7 +56,7 @@ def test_many_ticks():
 
     a = 600
     z = 3000
-    t = 30
+    t = 3
 
     counter = 0
 
@@ -64,7 +64,38 @@ def test_many_ticks():
         ds.tick( str(i*t) )
         counter+=1
 
-    print('counter:', counter)
+    print('=== counter:', counter)
 
     
     # assert ds.active_pomodoro.fingerprint == 'fingerprint 0:00 - 0:30 - free time'
+
+def test_print_schedule():
+    ds = Dispatcher()
+    with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
+        ds.parse_pomodoros( f.readlines() )
+
+    cp = ds.current_pomodoro()
+    ds.run_pomodoro(cp)
+
+    for p in ds.pomodoros:
+        caret = '   '
+        if p.active:
+            caret = '>> '
+        line = f'{caret}{p.description}'
+        print(line)
+
+def test_print_united_pomodoros():
+    ds = Dispatcher()
+    with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
+        ds.parse_pomodoros( f.readlines() )
+
+    cp = ds.current_pomodoro()
+    ds.run_pomodoro(cp)
+
+
+    for p in ds.united_pomodoros:
+        caret = '   '
+        if p.active:
+            caret = '>> '
+        line = f'{caret}{p.description}'
+        print(line)

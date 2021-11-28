@@ -1,9 +1,7 @@
-from datetime import datetime
-
 from chalicelib.ssm_parameter import SSMParameter
 
 from chalicelib.pomodoro import Pomodoro
-from chalicelib.misc import midnight_fix
+from chalicelib.misc import current_time
 
 from chalicelib.config import Config
 
@@ -14,6 +12,7 @@ class Dispatcher():
 
         self.previous_pomodoro = None
         self.active_pomodoro = None
+        self.reformatted = False
 
     def load_schedule(self) -> None:
         with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
@@ -28,10 +27,7 @@ class Dispatcher():
         for i in range(len(self.pomodoros) - 1):
             self.pomodoros[i].next = self.pomodoros[i + 1]
 
-    def get_pomodoro(self, time: str):
-
-        if type(time) == str:
-            time = midnight_fix(time)
+    def get_pomodoro(self, time):
 
         for p in self.pomodoros:
             if p.startint <= time and p.endint > time:
@@ -39,7 +35,9 @@ class Dispatcher():
         return None
     
     def current_pomodoro(self):
-        return self.get_pomodoro(datetime.now().strftime('%H%M'))
+        current = self.get_pomodoro(current_time())
+        
+        return current
 
     def run_pomodoro(self, pomodoro) -> None:
         if not pomodoro:
@@ -52,22 +50,27 @@ class Dispatcher():
             if self.previous_pomodoro:
                 self.previous_pomodoro.end_routine()
             self.previous_pomodoro = self.active_pomodoro
+
+        for p in self.pomodoros:
+            p.active = False
         
         self.active_pomodoro = pomodoro
-        # self.active_pomodoro.start_routine()
+        self.mark_next_pomodoros_as_active()
+        self.reformat_pomodoros()
         pomodoro.start_routine()
-        print('pomodoro run', pomodoro.description)
 
-    def tick(self, time = None):
-        if not time:
-            time = datetime.now().strftime('%H%M')
 
-        # print('input-time:', time)
+    def tick(self, forcedtime = None):
+        # print('tick:', forcedtime)
 
-        time = midnight_fix(time)
+        time = current_time(forcedtime)
+
+        # time = midnight_fix(time)
 
         if self.active_pomodoro:
+            
             active_minutes = int(time) - self.active_pomodoro.startint
+            # print(active_minutes)
             if active_minutes >= self.active_pomodoro.duration:
                 self.active_pomodoro.rest.start()
 
@@ -75,10 +78,6 @@ class Dispatcher():
         if p:
             self.check_and_fire(p)
 
-        # if time == cp.startint:
-            # self.run_pomodoro(cp)
-
-        # self.run_pomodoro()
 
     def check_and_fire(self, pomodoro: Pomodoro) -> None:
 
@@ -87,3 +86,67 @@ class Dispatcher():
 
         SSMParameter.save(pomodoro.fingerprint)
         self.run_pomodoro(pomodoro)
+        
+
+    def mark_next_pomodoros_as_active(self):
+        for i in range(len(self.pomodoros)):
+            p = self.pomodoros[i]
+            if p.active or i == 0:
+                continue
+            
+            prev = self.pomodoros[i-1]
+            if p.text == prev.text and prev.active:
+                p.active = True
+
+    @property
+    def united_pomodoros(self):
+        united = [self.pomodoros[0]]
+        last = self.pomodoros[0]        
+        for i, p in enumerate(self.pomodoros):
+            if p == last:
+                continue
+            if p.text == last.text:
+                last.end, last.endint = p.end, p.endint
+                continue
+            else:
+                last = p            
+            united.append(last)        
+        return united
+
+    def reformat_pomodoros(self):
+        if self.reformatted:
+            return
+
+        print('REFORMAT')
+        l = len(self.pomodoros)
+        for i in range(len(self.pomodoros)):
+            p = self.pomodoros[i]
+
+            # if p.next:
+            #     if p.next.text == p.text:
+            #         n = self.pomodoros[i+1]
+            #         n.text = f'X {n.text}'
+            # if p.active:
+            
+            # n = self.pomodoros[ i + min(1, l - i) -1 ]
+            # if n.text == p.text:
+            #     # pass
+            #     n.text = f'P{n.text}'
+            # print( min(4, l - i) )
+            for j in range( min(20, l - i) ):
+                if i+j+1 >= l:
+                    continue
+                
+                n = self.pomodoros[i+j+1]
+            #     # # pp = self.pomodoros[i-1]
+                if n.text == p.text:
+            #         # print('---- ------')
+                    if not n.reformatted:
+                        n.reformatted_text = f'{n.text}...'
+                        n.reformatted = True                    
+                        p.reformatted_text = f'{p.text } until {n.end}'
+                        p.reformatted = True
+                    continue
+                    
+                break
+        self.reformatted = True
