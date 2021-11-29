@@ -4,6 +4,8 @@ import re
 from chalicelib.config import Config
 from chalicelib.telegram import send_telegram_message
 
+from chalicelib.cw_log import CWLog
+
 class Rest():
 
     def __init__(self, parent_pomodoro) -> None:
@@ -32,6 +34,8 @@ class Rest():
 
     def start(self) -> None:
         ''' fires when pomodoros' 25 minutes ends and rest time for 5 minutes starts '''
+
+        CWLog.send_cw_log(f'Rest start for: { self.parent_pomodoro.text }')
 
         if self.rest_started:
             return # return early to prevent multiple notifications

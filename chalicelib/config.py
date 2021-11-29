@@ -16,9 +16,11 @@ class Config:
 
     SECRETS_ENV_PATH = f'{Path.cwd()}/chalicelib/.env.secrets'
 
-    SSM_PARAMETER_LAST_POMODORO = 'pomodoro_last'
+    
 
+    AWS_REGION = 'eu-north-1'
     AWS_SSM_ENABLED = True
+    SSM_PARAMETER_LAST_POMODORO = 'pomodoro_last'
     TELEGRAM_ENABLED = True  # Not send actual telegram messages if False
 
     SCHEDULE_FILE_PATH = f'{Path.cwd()}/chalicelib/schedule/schedule.txt'

@@ -30,6 +30,5 @@ def readinfo():
         'platform_release': platform.release(),
         'python version': platform.python_version(),
         'testing': Config.TESTING_MODE,
-        'production': Config.PRODUCTION,
         'load averages': f'{load1:.2f} {load5:.2f} {load15:.2f}'
     }

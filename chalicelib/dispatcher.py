@@ -5,6 +5,8 @@ from chalicelib.misc import current_time
 
 from chalicelib.config import Config
 
+from chalicelib.cw_log import CWLog
+
 class Dispatcher():
     def __init__(self, pomodoros = None) -> None:
         if pomodoros:
@@ -66,6 +68,8 @@ class Dispatcher():
 
     def tick(self, forcedtime = None):
         # print('tick:', forcedtime)
+
+        CWLog.send_cw_log('Dispatcher tick event')
 
         time = current_time(forcedtime)
 

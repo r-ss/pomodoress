@@ -4,7 +4,6 @@ from chalicelib.dispatcher import Dispatcher
 from chalicelib.config import Config
 
 
-
 def test_parsing():
     ds = Dispatcher()
     
@@ -59,17 +58,14 @@ def test_many_ticks(client):
     t = 3
 
     counter = 0
-
     for i in range(int(a/t), int(z/t)):
         ds.tick( str(i*t) )
         counter+=1
 
     print('=== counter:', counter)
 
-    
-    # assert ds.active_pomodoro.fingerprint == 'fingerprint 0:00 - 0:30 - free time'
 
-def test_print_schedule():
+def test_print_schedule(client):
     ds = Dispatcher()
     with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )
@@ -84,7 +80,7 @@ def test_print_schedule():
         line = f'{caret}{p.description}'
         print(line)
 
-def test_print_united_pomodoros():
+def test_print_united_pomodoros(client):
     ds = Dispatcher()
     with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )

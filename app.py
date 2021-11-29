@@ -6,7 +6,7 @@ from chalicelib.config import Config
 
 from chalicelib.info import readinfo
 
-
+from chalicelib.cw_log import CWLog
 load_dotenv(dotenv_path=Config.SECRETS_ENV_PATH)
 
 app = Chalice(app_name=Config.APP_NAME)
@@ -24,6 +24,7 @@ def index():
 
 @app.route('/info')
 def getinfo():
+    CWLog.send_cw_log('/info request')
     return readinfo()
 
 @app.route('/getcurrent')

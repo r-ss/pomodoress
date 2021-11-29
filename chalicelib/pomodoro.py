@@ -5,6 +5,8 @@ from chalicelib.misc import midnight_fix
 from chalicelib.config import Config
 from chalicelib.telegram import send_telegram_message
 
+from chalicelib.cw_log import CWLog
+
 class Pomodoro():
     def __init__(self, rawrow: str) -> None:
 
@@ -55,12 +57,15 @@ class Pomodoro():
             return
 
 
+        CWLog.send_cw_log(f'Pomorodo start_routine: { self.text }')
+
         send_telegram_message(f'{self.emoji} {self.start} - {self.formtext}')
         self.active = True
 
     
     def end_routine(self) -> None:
         # print('> end routine', self.description)
+        CWLog.send_cw_log(f'Pomorodo end_routine: { self.text }')
         self.active = False
 
     
