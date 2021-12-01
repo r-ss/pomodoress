@@ -42,12 +42,8 @@ def sendmanytime(withtime):
     ds.tick(withtime)
     return {'result': 'ok'}
 
-# @app.schedule(Rate(config.TICK_INTERVAL, unit=Rate.MINUTES))
 
-@app.schedule(Cron('0/1', '8-23', '*', '*', '?', '*'))
+""" Run every minute through 8:00 to 1:00 after midnight every day, Moscow time """
+@app.schedule(Cron('0/1', '5-22', '*', '*', '?', '*'))
 def sendcurrent_cron(event):
-    ds.tick()
-
-@app.schedule(Cron('30', '0', '*', '*', '?', '*'))
-def send_winddown_cron(event):
     ds.tick()

@@ -6,6 +6,8 @@ from chalicelib.telegram import send_telegram_message
 
 from chalicelib.cw_log import CWLog
 
+from chalicelib.ssm_parameter import SSMParameter
+
 class Rest():
 
     def __init__(self, parent_pomodoro) -> None:
@@ -37,8 +39,8 @@ class Rest():
 
         CWLog.send_cw_log(f'Rest start for: { self.parent_pomodoro.text }')
 
-        if self.rest_started:
-            return # return early to prevent multiple notifications
+        # if self.rest_started:
+            # return # return early to prevent multiple notifications
 
         # do we actually need rest here? If we have free time, no need to announce Rest
         if any(w in self.parent_pomodoro.text for w in config.UNPRODUCTIVE_ACTIVITIES):
@@ -50,7 +52,13 @@ class Rest():
             self.rest_started = True
             return
 
+        if SSMParameter.get() == f'rest for {self.parent_pomodoro.fingerprint}':
+            CWLog.send_cw_log(f'Rest skip because ssmparameter says it already fired: { self.parent_pomodoro.text }')
+            return
+
         send_telegram_message(f'{self.random_message()}{self.next_announce}')
+        SSMParameter.save(f'rest for {self.parent_pomodoro.fingerprint}')
+
         self.rest_started = True
 
         CWLog.send_cw_log(f'Rest has been started for: { self.parent_pomodoro.text }')

@@ -76,7 +76,7 @@ class Dispatcher():
         if self.active_pomodoro:
             active_minutes = int(time) - self.active_pomodoro.startint
             if active_minutes >= self.active_pomodoro.duration:
-                CWLog.send_cw_log(f'Firing active_pomodoro.rest.start(), active_minutes={self.active_pomodoro.fingerprint}')
+                CWLog.send_cw_log(f'Firing active_pomodoro.rest.start(), active_minutes={active_minutes}')
                 self.active_pomodoro.rest.start()
 
         p = self.get_pomodoro(time)
@@ -86,7 +86,13 @@ class Dispatcher():
 
     def check_and_fire(self, pomodoro: Pomodoro) -> None:
 
-        if SSMParameter.get() == pomodoro.fingerprint:
+        ssmparam = SSMParameter.get()
+
+        if ssmparam == f'rest for {pomodoro.fingerprint}':
+            CWLog.send_cw_log(f'Tick > SSMParameter "rest" for pomodoro ({pomodoro.fingerprint}), skip')
+            return
+
+        if ssmparam == pomodoro.fingerprint:
             CWLog.send_cw_log(f'Tick > SSMParameter equals current pomodoro ({pomodoro.fingerprint}), skip')
             return
 
