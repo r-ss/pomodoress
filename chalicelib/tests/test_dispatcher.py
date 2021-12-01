@@ -1,13 +1,13 @@
 import pytest
 from chalicelib.dispatcher import Dispatcher
 
-from chalicelib.config import Config
+from chalicelib.config import config
 
 
 def test_parsing():
     ds = Dispatcher()
     
-    with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
+    with open(config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )
 
     p = ds.get_pomodoro('0:00')
@@ -42,7 +42,7 @@ def test_bad_input():
 
 def test_tick():
     ds = Dispatcher()
-    with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
+    with open(config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )
 
     ds.tick( str(2400) )
@@ -50,7 +50,7 @@ def test_tick():
 
 def test_many_ticks(client):
     ds = Dispatcher()
-    with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
+    with open(config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )
 
     a = 600
@@ -67,7 +67,7 @@ def test_many_ticks(client):
 
 def test_print_schedule(client):
     ds = Dispatcher()
-    with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
+    with open(config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )
 
     cp = ds.current_pomodoro()
@@ -82,7 +82,7 @@ def test_print_schedule(client):
 
 def test_print_united_pomodoros(client):
     ds = Dispatcher()
-    with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
+    with open(config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )
 
     cp = ds.current_pomodoro()

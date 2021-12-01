@@ -1,12 +1,11 @@
-from chalicelib.config import Config
+from chalicelib.config import config
 import telebot
 import os
-from chalicelib.config import Config
 
 from chalicelib.cw_log import CWLog
 
 def send_telegram_message(message: str) -> None:
-    if not Config.TELEGRAM_ENABLED:
+    if not config.TELEGRAM_ENABLED:
         print(message)
         return
 

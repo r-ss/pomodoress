@@ -2,7 +2,7 @@ import re
 
 from chalicelib.rest import Rest
 from chalicelib.misc import midnight_fix
-from chalicelib.config import Config
+from chalicelib.config import config
 from chalicelib.telegram import send_telegram_message
 
 from chalicelib.cw_log import CWLog
@@ -33,7 +33,7 @@ class Pomodoro():
         # Rest object is in response for 5-minutes resting time window when pomodoros 25 minutes passes
         self.rest = Rest(self) # pass this pomodoro as parent_pomodoro for Rest object
 
-        self.duration = Config.POMODORO_DURATION # default pomodoro duration 25 minutes
+        self.duration = config.POMODORO_DURATION # default pomodoro duration 25 minutes
         self.previous = None # previous Pomodoro in queue
         self.next = None # next Pomodoro in queue
 
@@ -52,7 +52,7 @@ class Pomodoro():
         # print('> start routine', self.description)
 
         # not send notification if we have long uuproductive activities in a row
-        if any(w in self.text for w in Config.UNPRODUCTIVE_ACTIVITIES) and any(z in self.previous.text for z in Config.UNPRODUCTIVE_ACTIVITIES):
+        if any(w in self.text for w in config.UNPRODUCTIVE_ACTIVITIES) and any(z in self.previous.text for z in config.UNPRODUCTIVE_ACTIVITIES):
             self.rest_started = True
             return
 

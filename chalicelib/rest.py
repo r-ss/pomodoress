@@ -1,7 +1,7 @@
 import random
 import re
 
-from chalicelib.config import Config
+from chalicelib.config import config
 from chalicelib.telegram import send_telegram_message
 
 from chalicelib.cw_log import CWLog
@@ -15,7 +15,7 @@ class Rest():
         self.parent_pomodoro = parent_pomodoro
   
     def load_rest_messages(self) -> None:
-        with open(Config.REST_MESSAGES_FILE_PATH, 'r', encoding='UTF8') as f:
+        with open(config.REST_MESSAGES_FILE_PATH, 'r', encoding='UTF8') as f:
             lines = f.readlines()
             for line in lines:
                 self.rest_messages.append(re.sub(r'[\n]', '', line))
@@ -41,7 +41,7 @@ class Rest():
             return # return early to prevent multiple notifications
 
         # do we actually need rest here? If we have free time, no need to announce Rest
-        if any(w in self.parent_pomodoro.text for w in Config.UNPRODUCTIVE_ACTIVITIES):
+        if any(w in self.parent_pomodoro.text for w in config.UNPRODUCTIVE_ACTIVITIES):
             self.rest_started = True
             return
 
@@ -52,3 +52,5 @@ class Rest():
 
         send_telegram_message(f'{self.random_message()}{self.next_announce}')
         self.rest_started = True
+
+        CWLog.send_cw_log(f'Rest has been started for: { self.parent_pomodoro.text }')

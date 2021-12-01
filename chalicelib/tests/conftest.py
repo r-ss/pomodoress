@@ -3,14 +3,15 @@ import pytest
 from app import app
 from chalice.test import Client
 
-from chalicelib.config import Config
+from chalicelib.config import config
 
 @pytest.fixture
 def client():
     
-    Config.TESTING_MODE = True
-    Config.AWS_SSM_ENABLED = False
-    Config.TELEGRAM_ENABLED = False
+    config.TESTING_MODE = True
+    config.AWS_SSM_ENABLED = False
+    config.AWS_LOGGING_ENABLED = False
+    config.TELEGRAM_ENABLED = False
 
     with Client(app) as client:
         yield client

@@ -3,7 +3,7 @@ from chalicelib.ssm_parameter import SSMParameter
 from chalicelib.pomodoro import Pomodoro
 from chalicelib.misc import current_time
 
-from chalicelib.config import Config
+from chalicelib.config import config
 
 from chalicelib.cw_log import CWLog
 
@@ -17,7 +17,7 @@ class Dispatcher():
         self.reformatted = False
 
     def load_schedule(self) -> None:
-        with open(Config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
+        with open(config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
             self.parse_pomodoros( f.readlines() )
 
     def parse_pomodoros(self, raw_lines) -> None:
@@ -69,13 +69,14 @@ class Dispatcher():
     def tick(self, forcedtime = None):
         # print('tick:', forcedtime)
 
-        CWLog.send_cw_log('Dispatcher tick event')
+        # CWLog.send_cw_log('Dispatcher tick event')
 
         time = current_time(forcedtime)
 
         if self.active_pomodoro:
             active_minutes = int(time) - self.active_pomodoro.startint
             if active_minutes >= self.active_pomodoro.duration:
+                CWLog.send_cw_log(f'Firing active_pomodoro.rest.start(), active_minutes={self.active_pomodoro.fingerprint}')
                 self.active_pomodoro.rest.start()
 
         p = self.get_pomodoro(time)
@@ -86,9 +87,11 @@ class Dispatcher():
     def check_and_fire(self, pomodoro: Pomodoro) -> None:
 
         if SSMParameter.get() == pomodoro.fingerprint:
+            CWLog.send_cw_log(f'Tick > SSMParameter equals current pomodoro ({pomodoro.fingerprint}), skip')
             return
 
         SSMParameter.save(pomodoro.fingerprint)
+        CWLog.send_cw_log(f'Tick > SSMParameter updated, run pomodoro ({pomodoro.fingerprint})')
         self.run_pomodoro(pomodoro)
         
 

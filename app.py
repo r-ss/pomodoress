@@ -1,15 +1,15 @@
 from dotenv import load_dotenv
 
-from chalice import Chalice, Response, Rate
+from chalice import Chalice, Response, Cron
 from chalicelib.dispatcher import Dispatcher
-from chalicelib.config import Config
+from chalicelib.config import config
 
 from chalicelib.info import readinfo
 
 from chalicelib.cw_log import CWLog
-load_dotenv(dotenv_path=Config.SECRETS_ENV_PATH)
+load_dotenv(dotenv_path=config.SECRETS_ENV_PATH)
 
-app = Chalice(app_name=Config.APP_NAME)
+app = Chalice(app_name=config.APP_NAME)
 
 ds = Dispatcher()
 ds.load_schedule()
@@ -42,6 +42,12 @@ def sendmanytime(withtime):
     ds.tick(withtime)
     return {'result': 'ok'}
 
-@app.schedule(Rate(Config.TICK_INTERVAL, unit=Rate.MINUTES))
+# @app.schedule(Rate(config.TICK_INTERVAL, unit=Rate.MINUTES))
+
+@app.schedule(Cron('0/1', '8-23', '*', '*', '?', '*'))
 def sendcurrent_cron(event):
+    ds.tick()
+
+@app.schedule(Cron('30', '0', '*', '*', '?', '*'))
+def send_winddown_cron(event):
     ds.tick()
