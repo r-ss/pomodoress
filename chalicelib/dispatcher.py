@@ -1,7 +1,7 @@
 from chalicelib.ssm_parameter import SSMParameter
 
 from chalicelib.pomodoro import Pomodoro
-from chalicelib.misc import current_time
+from chalicelib.misc import current_time, midnight_fix
 
 from chalicelib.config import config
 
@@ -34,7 +34,10 @@ class Dispatcher():
             self.pomodoros[i].next = self.pomodoros[i + 1]
 
         
-    def get_pomodoro(self, time):
+    def get_pomodoro(self, time):      
+        if type(time) == str:
+            time = midnight_fix(time)
+
         for p in self.pomodoros:
             if p.startint <= time and p.endint > time:
                 return p
@@ -51,7 +54,7 @@ class Dispatcher():
             return None
 
         if self.active_pomodoro:
-            if self.active_pomodoro == pomodoro:
+            if self.active_pomodoro.fingerprint == pomodoro.fingerprint:
                 return
             if self.previous_pomodoro:
                 self.previous_pomodoro.end_routine()
@@ -74,10 +77,12 @@ class Dispatcher():
         time = current_time(forcedtime)
 
         if self.active_pomodoro:
-            active_minutes = int(time) - self.active_pomodoro.startint
-            if active_minutes >= self.active_pomodoro.duration:
+            
+            active_minutes = int(time - self.active_pomodoro.startint)
+            if active_minutes >= 25 and active_minutes < 30:
                 CWLog.send_cw_log(f'Firing active_pomodoro.rest.start(), active_minutes={active_minutes}')
-                self.active_pomodoro.rest.start()
+                if self.active_pomodoro.next:
+                    self.active_pomodoro.rest.start()
 
         p = self.get_pomodoro(time)
         if p:

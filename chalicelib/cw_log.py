@@ -46,6 +46,7 @@ class CWLog:
     def send_cw_log(msg: str):
 
         if not config.AWS_LOGGING_ENABLED:
+            # print(msg)
             return
 
         response = client.describe_log_streams(
