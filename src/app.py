@@ -81,21 +81,21 @@ def main() -> None:
     
 
     # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
+    bot_dispatcher = updater.dispatcher
 
     # on different commands - answer in Telegram
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("pause", pause))
+    bot_dispatcher.add_handler(CommandHandler("start", start))
+    bot_dispatcher.add_handler(CommandHandler("pause", pause))
 
-    dispatcher.add_handler(CommandHandler("current", print_current_pomodoro))
-    dispatcher.add_handler(CommandHandler("next", print_next_pomodoro))
-    dispatcher.add_handler(CommandHandler("shedule", print_shedule))
-    dispatcher.add_handler(CommandHandler("fullshedule", print_full_shedule))
+    bot_dispatcher.add_handler(CommandHandler("current", print_current_pomodoro))
+    bot_dispatcher.add_handler(CommandHandler("next", print_next_pomodoro))
+    bot_dispatcher.add_handler(CommandHandler("shedule", print_shedule))
+    bot_dispatcher.add_handler(CommandHandler("fullshedule", print_full_shedule))
 
     # Start the Bot
     updater.start_polling()
 
-    # job = scheduler.add_job(sheduler_tick, 'interval', minutes=1, seconds=0)
+    # job = scheduler.add_job(sheduler_tick_event, 'interval', seconds=10)
     scheduler.add_job(sheduler_tick_event, 'cron', minute='*', second=0)
     scheduler.add_job(reset_day_event, 'cron', minute=15, hour=4)
     scheduler.start()

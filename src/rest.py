@@ -3,7 +3,7 @@ import re
 
 from config import config
 
-from notification import send_telegram
+from notification import Notification
 
 class Rest():
 
@@ -60,7 +60,9 @@ class Rest():
         #     return
 
         # send_telegram_message(f'{self.random_message()}{self.next_announce}')
-        send_telegram(f'{self.random_message()}{self.next_announce}')
+        rest_notification = Notification(f'{self.random_message()}{self.next_announce}')
+
+        
         # SSMParameter.save(f'rest for {self.parent_pomodoro.fingerprint}')
 
         self.active = True

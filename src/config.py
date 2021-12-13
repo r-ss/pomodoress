@@ -26,8 +26,6 @@ class config:
     TELEGRAM_ENABLE_SENDING = True
     TELEGRAM_TOKEN = os.environ.get('TELEGRAM_HTTP_TOKEN')
     TELEGRAM_USER = os.environ.get('TELEGRAM_USERID')
-    TELEGRAM_READY_BOT = None
-
 
     SCHEDULE_FILE_PATH = f'{Path.cwd()}/storage/schedule.txt'
     REST_MESSAGES_FILE_PATH = f'{Path.cwd()}/storage/rest_messages.txt'
@@ -44,5 +42,6 @@ class config:
 
 
     LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    LOGGING_LEVEL = logging.INFO
+    # LOGGING_LEVEL = logging.WARNING  # logging.INFO
+    LOGGING_LEVEL = logging.INFO  # logging.INFO
     

@@ -4,7 +4,7 @@ from rest import Rest
 from misc import midnight_fix
 from config import config
 
-from notification import send_telegram
+from notification import Notification
 
 class Pomodoro():
     def __init__(self, rawrow: str) -> None:
@@ -56,7 +56,7 @@ class Pomodoro():
             return
 
 
-        send_telegram(f'{self.emoji} {self.start} - {self.formtext}')
+        pomodoro_notification = Notification(f'{self.emoji} {self.start} - {self.formtext}')
         self.notified = True
 
         self.active = True
