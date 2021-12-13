@@ -7,9 +7,10 @@ from notification import Notification
 
 class Rest():
 
+    active = False
+
     def __init__(self, parent_pomodoro) -> None:
         self.rest_messages = self.load_rest_messages()
-        self.active = False
         self.parent_pomodoro = parent_pomodoro
         self.duration = config.REST_DURATION # default rest duration 5 minutes
   
@@ -60,11 +61,12 @@ class Rest():
         #     return
 
         # send_telegram_message(f'{self.random_message()}{self.next_announce}')
+        self.active = True
         rest_notification = Notification(f'{self.random_message()}{self.next_announce}')
 
         
         # SSMParameter.save(f'rest for {self.parent_pomodoro.fingerprint}')
 
-        self.active = True
+        
 
         # CWLog.send_cw_log(f'Rest has been started for: { self.parent_pomodoro.text }')
