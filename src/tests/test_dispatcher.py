@@ -1,7 +1,7 @@
 import pytest
-from src.dispatcher import Dispatcher
+from dispatcher import Dispatcher
 
-from src.config import config
+from config import config
 
 
 def test_parsing():

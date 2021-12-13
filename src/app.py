@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # pylint: disable=C0116,W0613
 
 # from datetime import datetime

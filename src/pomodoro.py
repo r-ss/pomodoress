@@ -27,7 +27,7 @@ class Pomodoro():
         self.active = False
         self.reformatted = False
         self.reformatted_text = self.text
-        # self.notified = False # marks when notification sends to user
+        self.notified = False # marks when notification sends to user
 
         # Rest object is in response for 5-minutes resting time window when pomodoros 25 minutes passes
         self.rest = Rest(self) # pass this pomodoro as parent_pomodoro for Rest object
@@ -56,15 +56,14 @@ class Pomodoro():
             return
 
 
-        # CWLog.send_cw_log(f'Pomorodo start_routine: { self.text }')
         send_telegram(f'{self.emoji} {self.start} - {self.formtext}')
+        self.notified = True
 
         self.active = True
 
     
     def end_routine(self) -> None:
         # print('> end routine', self.description)
-        # CWLog.send_cw_log(f'Pomorodo end_routine: { self.text }')
         self.active = False
 
     

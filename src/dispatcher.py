@@ -43,9 +43,7 @@ class Dispatcher():
         return None
     
     def current_pomodoro(self):
-        current = self.get_pomodoro(current_time())
-        
-        return current
+        return self.get_pomodoro(current_time())
 
     def run_pomodoro(self, pomodoro) -> None:
         if not pomodoro:
@@ -59,29 +57,19 @@ class Dispatcher():
                 self.previous_pomodoro.end_routine()
             self.previous_pomodoro = self.active_pomodoro
 
-        # for p in self.pomodoros:
-            # p.active = False
-        
         self.active_pomodoro = pomodoro
-        # self.mark_next_pomodoros_as_active()
         self.reformat_pomodoros()
         pomodoro.start_routine()
 
 
     def tick(self, forcedtime = None):
-        # print('tick:', forcedtime)
-
-        
-
         time = current_time(forcedtime)
-
         print('Dispatcher tick event', time)
 
         if self.active_pomodoro:
             
             active_minutes = int(time - self.active_pomodoro.startint)
             if active_minutes >= config.POMODORO_DURATION:
-                # CWLog.send_cw_log(f'Firing active_pomodoro.rest.start(), active_minutes={active_minutes}')
                 if self.active_pomodoro.next:
                     self.active_pomodoro.rest.start()
 
@@ -91,23 +79,12 @@ class Dispatcher():
 
 
     def check_and_fire(self, pomodoro: Pomodoro) -> None:
-
         if not pomodoro.active:
             self.run_pomodoro(pomodoro)
         
-
-    # def mark_next_pomodoros_as_active(self):
-    #     for i in range(len(self.pomodoros)):
-    #         p = self.pomodoros[i]
-    #         if p.active or i == 0:
-    #             continue
-            
-    #         prev = self.pomodoros[i-1]
-    #         if p.text == prev.text and prev.active:
-    #             p.active = True
-
     @property
     def united_pomodoros(self):
+        """ skipped repeated pomodoros of same type """
         united = [self.pomodoros[0]]
         last = self.pomodoros[0]        
         for i, p in enumerate(self.pomodoros):
@@ -146,7 +123,7 @@ class Dispatcher():
         self.reformatted = True
 
     def get_schedule(self, united = True):
-
+        """ used for print shedule to user on request """
         pool = self.pomodoros
         if united:
             pool = self.united_pomodoros
@@ -154,7 +131,6 @@ class Dispatcher():
         s = []
         for p in pool:
             s.append(p.description)
-
         return '\n'.join(s)
 
             
