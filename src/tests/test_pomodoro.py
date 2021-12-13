@@ -1,5 +1,5 @@
 import pytest
-from chalicelib.pomodoro import Pomodoro
+from src.pomodoro import Pomodoro
 
 def test_basic():
     p = Pomodoro('"14:00","14:30","","sport"\n')

@@ -13,8 +13,3 @@ Based on pomodoro technique. Schedule example:
     💪 14:55 - make some exercises! next: netflix
     📺 15:00 - netflix until 16:00
 
-### Realization
-
-Implemented as stateless function on AWS Lambda with Chalice framework.
-
-Every minute timed event is fired by AWS EventBridge. App look up a relevant Pomodoro for current time then sends a notification in form of a telegram message for pomodoro start, end, rest time etc.

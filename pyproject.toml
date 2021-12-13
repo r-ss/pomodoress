@@ -5,13 +5,10 @@ description = ""
 authors = ["Ress"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-chalice = "^1.26.2"
-pytest = "^6.2.5"
+python = "^3.10"
 python-dotenv = "^0.19.2"
-boto3 = "^1.20.13"
-telebot = "^0.0.4"
 pytz = "^2021.3"
+python-telegram-bot = "^13.9"
 
 [tool.poetry.dev-dependencies]
 

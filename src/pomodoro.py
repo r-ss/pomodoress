@@ -1,11 +1,10 @@
 import re
 
-from chalicelib.rest import Rest
-from chalicelib.misc import midnight_fix
-from chalicelib.config import config
-from chalicelib.telegram import send_telegram_message
+from rest import Rest
+from misc import midnight_fix
+from config import config
 
-from chalicelib.cw_log import CWLog
+from notification import send_telegram
 
 class Pomodoro():
     def __init__(self, rawrow: str) -> None:
@@ -57,15 +56,15 @@ class Pomodoro():
             return
 
 
-        CWLog.send_cw_log(f'Pomorodo start_routine: { self.text }')
+        # CWLog.send_cw_log(f'Pomorodo start_routine: { self.text }')
+        send_telegram(f'{self.emoji} {self.start} - {self.formtext}')
 
-        send_telegram_message(f'{self.emoji} {self.start} - {self.formtext}')
         self.active = True
 
     
     def end_routine(self) -> None:
         # print('> end routine', self.description)
-        CWLog.send_cw_log(f'Pomorodo end_routine: { self.text }')
+        # CWLog.send_cw_log(f'Pomorodo end_routine: { self.text }')
         self.active = False
 
     

@@ -1,7 +1,7 @@
 import pytest
-from chalicelib.dispatcher import Dispatcher
+from src.dispatcher import Dispatcher
 
-from chalicelib.config import config
+from src.config import config
 
 
 def test_parsing():
@@ -48,14 +48,14 @@ def test_tick():
     ds.tick( str(2400) )
     assert ds.active_pomodoro.fingerprint == 'fingerprint 0:00 - 0:30 - free time'
 
-def test_many_ticks(client):
+def test_many_ticks():
     ds = Dispatcher()
     with open(config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )
 
     a = 600
     z = 3000
-    t = 3
+    t = 1
 
     counter = 0
     for i in range(int(a/t), int(z/t)):
@@ -65,7 +65,7 @@ def test_many_ticks(client):
     print('=== counter:', counter)
 
 
-def test_print_schedule(client):
+def test_print_schedule():
     ds = Dispatcher()
     with open(config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )
@@ -80,7 +80,7 @@ def test_print_schedule(client):
         line = f'{caret}{p.description}'
         print(line)
 
-def test_print_united_pomodoros(client):
+def test_print_united_pomodoros():
     ds = Dispatcher()
     with open(config.SCHEDULE_FILE_PATH, 'r', encoding='UTF8') as f:
         ds.parse_pomodoros( f.readlines() )

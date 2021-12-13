@@ -2,11 +2,10 @@
 __pycache__
 *.pyc
 
-.chalice/deployments/
-.chalice/venv/
-
 # secrets file
 .env.secrets
+
+env/
 
 # snippets
 commands.txt

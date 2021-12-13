@@ -1,26 +1,25 @@
 import random
 import re
 
-from chalicelib.config import config
-from chalicelib.telegram import send_telegram_message
+from config import config
 
-from chalicelib.cw_log import CWLog
-
-from chalicelib.ssm_parameter import SSMParameter
+from notification import send_telegram
 
 class Rest():
 
     def __init__(self, parent_pomodoro) -> None:
-        self.rest_messages = []
-        self.load_rest_messages()
-        self.rest_started = False
+        self.rest_messages = self.load_rest_messages()
+        self.active = False
         self.parent_pomodoro = parent_pomodoro
+        self.duration = config.REST_DURATION # default rest duration 5 minutes
   
     def load_rest_messages(self) -> None:
+        messages = []
         with open(config.REST_MESSAGES_FILE_PATH, 'r', encoding='UTF8') as f:
             lines = f.readlines()
             for line in lines:
-                self.rest_messages.append(re.sub(r'[\n]', '', line))
+                messages.append(re.sub(r'[\n]', '', line))
+        return messages
 
     def random_message(self) -> str:
         return random.choice(self.rest_messages)
@@ -38,28 +37,32 @@ class Rest():
     def start(self) -> None:
         ''' fires when pomodoros' 25 minutes ends and rest time for 5 minutes starts '''
 
-        CWLog.send_cw_log(f'Rest start for: { self.parent_pomodoro.text }')
+        if self.active:
+            return
+
+        # CWLog.send_cw_log(f'Rest start for: { self.parent_pomodoro.text }')
 
         # if self.rest_started:
             # return # return early to prevent multiple notifications
 
         # do we actually need rest here? If we have free time, no need to announce Rest
         if any(w in self.parent_pomodoro.text for w in config.UNPRODUCTIVE_ACTIVITIES):
-            self.rest_started = True
+            self.active = True
             return
 
         # also not send rest announces before 10:00
         if self.parent_pomodoro.startint < 1000:
-            self.rest_started = True
+            self.active = True
             return
 
-        if SSMParameter.get() == f'rest for {self.parent_pomodoro.fingerprint}':
-            CWLog.send_cw_log(f'Rest skip because ssmparameter says it already fired: { self.parent_pomodoro.text }')
-            return
+        # if SSMParameter.get() == f'rest for {self.parent_pomodoro.fingerprint}':
+        #     CWLog.send_cw_log(f'Rest skip because ssmparameter says it already fired: { self.parent_pomodoro.text }')
+        #     return
 
-        send_telegram_message(f'{self.random_message()}{self.next_announce}')
-        SSMParameter.save(f'rest for {self.parent_pomodoro.fingerprint}')
+        # send_telegram_message(f'{self.random_message()}{self.next_announce}')
+        send_telegram(f'{self.random_message()}{self.next_announce}')
+        # SSMParameter.save(f'rest for {self.parent_pomodoro.fingerprint}')
 
-        self.rest_started = True
+        self.active = True
 
-        CWLog.send_cw_log(f'Rest has been started for: { self.parent_pomodoro.text }')
+        # CWLog.send_cw_log(f'Rest has been started for: { self.parent_pomodoro.text }')

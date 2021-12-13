@@ -1,16 +1,15 @@
-from chalicelib.ssm_parameter import SSMParameter
+from pomodoro import Pomodoro
+from misc import current_time, midnight_fix
 
-from chalicelib.pomodoro import Pomodoro
-from chalicelib.misc import current_time, midnight_fix
+from config import config
 
-from chalicelib.config import config
-
-from chalicelib.cw_log import CWLog
 
 class Dispatcher():
     def __init__(self, pomodoros = None) -> None:
         if pomodoros:
             self.pomodoros = pomodoros
+        else:
+            self.load_schedule()
 
         self.previous_pomodoro = None
         self.active_pomodoro = None
@@ -54,17 +53,17 @@ class Dispatcher():
             return None
 
         if self.active_pomodoro:
-            if self.active_pomodoro.fingerprint == pomodoro.fingerprint:
+            if self.active_pomodoro == pomodoro:
                 return
             if self.previous_pomodoro:
                 self.previous_pomodoro.end_routine()
             self.previous_pomodoro = self.active_pomodoro
 
-        for p in self.pomodoros:
-            p.active = False
+        # for p in self.pomodoros:
+            # p.active = False
         
         self.active_pomodoro = pomodoro
-        self.mark_next_pomodoros_as_active()
+        # self.mark_next_pomodoros_as_active()
         self.reformat_pomodoros()
         pomodoro.start_routine()
 
@@ -72,15 +71,17 @@ class Dispatcher():
     def tick(self, forcedtime = None):
         # print('tick:', forcedtime)
 
-        # CWLog.send_cw_log('Dispatcher tick event')
+        
 
         time = current_time(forcedtime)
+
+        print('Dispatcher tick event', time)
 
         if self.active_pomodoro:
             
             active_minutes = int(time - self.active_pomodoro.startint)
-            if active_minutes >= 25 and active_minutes < 30:
-                CWLog.send_cw_log(f'Firing active_pomodoro.rest.start(), active_minutes={active_minutes}')
+            if active_minutes >= config.POMODORO_DURATION:
+                # CWLog.send_cw_log(f'Firing active_pomodoro.rest.start(), active_minutes={active_minutes}')
                 if self.active_pomodoro.next:
                     self.active_pomodoro.rest.start()
 
@@ -91,30 +92,19 @@ class Dispatcher():
 
     def check_and_fire(self, pomodoro: Pomodoro) -> None:
 
-        ssmparam = SSMParameter.get()
-
-        if ssmparam == f'rest for {pomodoro.fingerprint}':
-            CWLog.send_cw_log(f'Tick > SSMParameter "rest" for pomodoro ({pomodoro.fingerprint}), skip')
-            return
-
-        if ssmparam == pomodoro.fingerprint:
-            CWLog.send_cw_log(f'Tick > SSMParameter equals current pomodoro ({pomodoro.fingerprint}), skip')
-            return
-
-        SSMParameter.save(pomodoro.fingerprint)
-        CWLog.send_cw_log(f'Tick > SSMParameter updated, run pomodoro ({pomodoro.fingerprint})')
-        self.run_pomodoro(pomodoro)
+        if not pomodoro.active:
+            self.run_pomodoro(pomodoro)
         
 
-    def mark_next_pomodoros_as_active(self):
-        for i in range(len(self.pomodoros)):
-            p = self.pomodoros[i]
-            if p.active or i == 0:
-                continue
+    # def mark_next_pomodoros_as_active(self):
+    #     for i in range(len(self.pomodoros)):
+    #         p = self.pomodoros[i]
+    #         if p.active or i == 0:
+    #             continue
             
-            prev = self.pomodoros[i-1]
-            if p.text == prev.text and prev.active:
-                p.active = True
+    #         prev = self.pomodoros[i-1]
+    #         if p.text == prev.text and prev.active:
+    #             p.active = True
 
     @property
     def united_pomodoros(self):
@@ -154,3 +144,17 @@ class Dispatcher():
                     
                 break
         self.reformatted = True
+
+    def get_schedule(self, united = True):
+
+        pool = self.pomodoros
+        if united:
+            pool = self.united_pomodoros
+        
+        s = []
+        for p in pool:
+            s.append(p.description)
+
+        return '\n'.join(s)
+
+            
