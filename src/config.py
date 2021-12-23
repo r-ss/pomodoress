@@ -1,47 +1,55 @@
+import os
+import pytz
+import socket
+
 from pathlib import Path
 from dotenv import load_dotenv
-import logging
-import pytz
-import os
 
-SECRETS_ENV_PATH = f'{Path.cwd()}/.env.secrets'
+SECRETS_ENV_PATH = f"{Path.cwd()}/.env.secrets"
 load_dotenv(dotenv_path=SECRETS_ENV_PATH)
 
-# sheet_id = '16MvAmxu2gzrRYGyepzxe19w7zKr8Zr8RIB898bQBTIs'
-# sheet_name = 'home'
-# sheet_url = f'https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}'
 
 class config:
 
-    APP_NAME = 'pomodoress'
+    APP_NAME = "pomodoress"
+    BASE_DIR: str = Path.cwd()
+    ENTRYPOINT = Path("src/app.py")
 
-    TESTING_MODE = False
-    # PRODUCTION = True
+    # mode switch
+    PRODUCTION: bool = True
+    if socket.gethostname() == "ress-mpb.local":
+        PRODUCTION = False
+
+    DEBUG: bool = not PRODUCTION
+    TESTING_MODE: bool = False  # Must be set to True only in autotests
+
+    # secrets
+    SECRET_KEY = str(os.environ.get("SECRET_KEY"))
+
+    # server and deploy config
+    HOST = "0.0.0.0"
+    PORT = 9004
+    SERVER_WATCH_FILES = not PRODUCTION  # auto reload on source files change
+
+    # logging setup, more in log.py
+    LOG_FILE_PATH = f"{Path.cwd()}/logs/log.log"
+
+    # notifications
+    TELEGRAM_ENABLE_SENDING = True
+    TELEGRAM_TOKEN = os.environ.get("TELEGRAM_HTTP_TOKEN")
+    TELEGRAM_USER = os.environ.get("TELEGRAM_USERID")
 
     PAUSED = False
-
-    
-
-
-    TELEGRAM_ENABLE_SENDING = True
-    TELEGRAM_TOKEN = os.environ.get('TELEGRAM_HTTP_TOKEN')
-    TELEGRAM_USER = os.environ.get('TELEGRAM_USERID')
-
-    SCHEDULE_FILE_PATH = f'{Path.cwd()}/storage/schedule.txt'
-    REST_MESSAGES_FILE_PATH = f'{Path.cwd()}/storage/rest_messages.txt'
-
+    SCHEDULE_FILE_PATH = f"{Path.cwd()}/storage/schedule.txt"
+    REST_MESSAGES_FILE_PATH = f"{Path.cwd()}/storage/rest_messages.txt"
+    UNPRODUCTIVE_ACTIVITIES = ["free", "dinner", "netflix"]
 
     # Default Pomodoro and Rest duration, in minutes
     POMODORO_DURATION = 25
     REST_DURATION = 5
 
-    UNPRODUCTIVE_ACTIVITIES = ['free', 'dinner', 'netflix']
-
-    TZ = pytz.timezone('Europe/Moscow')
-    DT_FORMAT = '%d %B %Y %H:%M:%S %Z'
-
-
-    LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    # LOGGING_LEVEL = logging.WARNING  # logging.INFO
-    LOGGING_LEVEL = logging.INFO  # logging.INFO
-    
+    # formats
+    DATETIME_FORMAT_TECHNICAL: str = "%Y-%m-%d %H:%M:%S"
+    DATETIME_FORMAT_HUMAN: str = "%d.%m.%Y %H:%M:%S"
+    # TIMEZONE_STRING = 'Europe/Moscow'
+    TZ = pytz.timezone("Europe/Moscow")

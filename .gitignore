@@ -9,3 +9,5 @@ env/
 
 # snippets
 commands.txt
+
+poetry.lock
