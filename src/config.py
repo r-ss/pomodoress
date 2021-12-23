@@ -12,6 +12,7 @@ load_dotenv(dotenv_path=SECRETS_ENV_PATH)
 class config:
 
     APP_NAME = "pomodoress"
+    APP_SERVER = "ress@fold"
     BASE_DIR: str = Path.cwd()
     ENTRYPOINT = Path("src/app.py")
 

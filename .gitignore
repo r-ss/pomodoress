@@ -4,6 +4,7 @@ __pycache__
 
 # secrets file
 .env.secrets
+token.json
 
 env/
 
@@ -11,3 +12,5 @@ env/
 commands.txt
 
 poetry.lock
+
+
