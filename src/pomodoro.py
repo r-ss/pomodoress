@@ -7,6 +7,8 @@ from config import config
 from notification import Notification
 from log import log
 
+import dateutil.parser
+
 
 class Pomodoro:
     def __init__(self, rawrow: str) -> None:
@@ -24,7 +26,7 @@ class Pomodoro:
         self.start, self.startint = rawrow[0], midnight_fix(rawrow[0])
         self.end, self.endint = rawrow[1], midnight_fix(rawrow[1])
 
-        self.emoji = rawrow[2]
+        self.emoji = rawrow[2].strip()
         self.text = rawrow[3]
         self.fingerprint = f"fingerprint {self.start} - {self.end} - {self.text}"
 
@@ -70,3 +72,11 @@ class Pomodoro:
     def end_routine(self) -> None:
         # log('> end routine', self.description)
         self.active = False
+
+    @property
+    def calc_start(self):
+        return config.TZ.localize(dateutil.parser.parse(self.start))
+
+    @property
+    def calc_end(self):
+        return config.TZ.localize(dateutil.parser.parse(self.end))

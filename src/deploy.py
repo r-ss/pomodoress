@@ -3,7 +3,7 @@ from config import config
 from log import log
 from utils import bytes_to_human_readable_size
 
-RSYNC_CMD_BASE = "rsync -az --progress --stats --delete"
+RSYNC_CMD_BASE = "rsync -az --progress --stats --delete --exclude env --exclude logs"
 
 SERVER = config.APP_SERVER
 SRC = config.BASE_DIR

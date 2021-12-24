@@ -1,12 +1,22 @@
+from datetime import datetime
+from google_calendar.calendar import GoogleCalendar
 from pomodoro import Pomodoro
+from calendar_pomodoro import CalendarPomodoro
 from misc import current_time, midnight_fix
 
 from config import config
 from log import log
 
+from dateutil.relativedelta import relativedelta
+from emoji import emojize
 
 class Dispatcher:
     def __init__(self, pomodoros=None) -> None:
+
+        self.day = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)  # + relativedelta(days=1)
+        self.calendar = None
+        self.calendar_events = None
+
         if pomodoros:
             self.pomodoros = pomodoros
         else:
@@ -15,10 +25,30 @@ class Dispatcher:
         self.previous_pomodoro = None
         self.active_pomodoro = None
         self.reformatted = False
+        
 
     def load_schedule(self) -> None:
         with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
             self.parse_pomodoros(f.readlines())
+
+        self.load_calendar()
+        self.merge_calendar_with_schedule()
+
+    def load_calendar(self) -> None:
+        
+        self.calendar = GoogleCalendar()
+        self.calendar_events = self.calendar.load_for_day(self.day)
+
+    def merge_calendar_with_schedule(self) -> None:
+        for p in self.pomodoros:
+            for e in self.calendar_events:
+                if not e.all_day:
+                    if e.start <= p.calc_start and e.end > p.calc_start + relativedelta(minutes=29):
+                        p.emoji = emojize(':calendar:')
+                        # p.text = f'{e.text} (was {p.text})'
+                        p.text = e.text
+                        if e.is_commute_event:
+                            p.emoji = emojize(':automobile:')
 
     def parse_pomodoros(self, raw_lines) -> None:
         self.pomodoros = []
@@ -122,11 +152,23 @@ class Dispatcher:
 
     def get_schedule(self, united=True):
         """used for print shedule to user on request"""
+
+        s = []
+
+        if self.calendar_events.have_allday_events:
+            s.append(f'Shedule for {self.day.strftime(config.DATE_FORMAT_HUMAN)}:\n')
+            for e in self.calendar_events:
+                if e.all_day:
+                    s.append(e.text)
+            s.append('')  # for line break in output
+        
+
+
         pool = self.pomodoros
         if united:
             pool = self.united_pomodoros
 
-        s = []
+        
         for p in pool:
             s.append(p.description)
         return "\n".join(s)

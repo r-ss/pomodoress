@@ -59,7 +59,7 @@ def pause(update: Update, context: CallbackContext) -> None:
     update.message.reply_text("paused")
 
 
-def sheduler_tick_event():
+def scheduler_tick_event():
     if not config.PAUSED:
         dispatcher.tick()
 
@@ -86,12 +86,12 @@ def print_next_pomodoro(update: Update, context: CallbackContext):
     update.message.reply_text(p.next.description)
 
 
-def print_shedule(update: Update, context: CallbackContext):
+def print_schedule(update: Update, context: CallbackContext):
     s = dispatcher.get_schedule(united=True)
     update.message.reply_text(s)
 
 
-def print_full_shedule(update: Update, context: CallbackContext):
+def print_full_schedule(update: Update, context: CallbackContext):
     s = dispatcher.get_schedule(united=False)
     update.message.reply_text(s)
 
@@ -125,11 +125,11 @@ def main() -> None:
 
     bot_dispatcher.add_handler(CommandHandler("current", print_current_pomodoro))
     bot_dispatcher.add_handler(CommandHandler("next", print_next_pomodoro))
-    bot_dispatcher.add_handler(CommandHandler("shedule", print_shedule))
-    bot_dispatcher.add_handler(CommandHandler("fullshedule", print_full_shedule))
+    bot_dispatcher.add_handler(CommandHandler("schedule", print_schedule))
+    bot_dispatcher.add_handler(CommandHandler("fullschedule", print_full_schedule))
 
-    # job = scheduler.add_job(sheduler_tick_event, 'interval', seconds=10)
-    scheduler.add_job(sheduler_tick_event, "cron", minute="*", second=0)
+    # job = scheduler.add_job(scheduler_tick_event, 'interval', seconds=10)
+    scheduler.add_job(scheduler_tick_event, "cron", minute="*", second=0)
     scheduler.add_job(reset_day_event, "cron", minute=15, hour=4)
 
     scheduler.start()

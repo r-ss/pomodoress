@@ -12,7 +12,7 @@ load_dotenv(dotenv_path=SECRETS_ENV_PATH)
 class config:
 
     APP_NAME = "pomodoress"
-    APP_SERVER = "ress@fold"
+    APP_SERVER = "ress@bass"
     BASE_DIR: str = Path.cwd()
     ENTRYPOINT = Path("src/app.py")
 
@@ -50,7 +50,8 @@ class config:
     REST_DURATION = 5
 
     # formats
+    DATE_FORMAT_HUMAN: str = "%d.%m.%Y"
     DATETIME_FORMAT_TECHNICAL: str = "%Y-%m-%d %H:%M:%S"
-    DATETIME_FORMAT_HUMAN: str = "%d.%m.%Y %H:%M:%S"
+    DATETIME_FORMAT_HUMAN: str = "%d.%m.%Y %H:%M"
     # TIMEZONE_STRING = 'Europe/Moscow'
     TZ = pytz.timezone("Europe/Moscow")
