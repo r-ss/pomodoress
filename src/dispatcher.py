@@ -1,14 +1,17 @@
+from typing import Union
 from datetime import datetime
 from google_calendar.calendar import GoogleCalendar
 from pomodoro import Pomodoro
-from calendar_pomodoro import CalendarPomodoro
-from misc import current_time, midnight_fix
+from pomodoro_calendar_event import PomodoroCalendarEvent
 
 from config import config
 from log import log
 
 from dateutil.relativedelta import relativedelta
 from emoji import emojize
+
+from misc import current_time, midnight_fix
+
 
 class Dispatcher:
     def __init__(self, pomodoros=None) -> None:
@@ -25,7 +28,6 @@ class Dispatcher:
         self.previous_pomodoro = None
         self.active_pomodoro = None
         self.reformatted = False
-        
 
     def load_schedule(self) -> None:
         with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
@@ -35,20 +37,33 @@ class Dispatcher:
         self.merge_calendar_with_schedule()
 
     def load_calendar(self) -> None:
-        
+
         self.calendar = GoogleCalendar()
         self.calendar_events = self.calendar.load_for_day(self.day)
+
+    def replace_pomodoro(self, a, b):
+        self.pomodoros = [b if p.start == a.start else p for p in self.pomodoros]
 
     def merge_calendar_with_schedule(self) -> None:
         for p in self.pomodoros:
             for e in self.calendar_events:
                 if not e.all_day:
-                    if e.start <= p.calc_start and e.end > p.calc_start + relativedelta(minutes=29):
-                        p.emoji = emojize(':calendar:')
-                        # p.text = f'{e.text} (was {p.text})'
-                        p.text = e.text
-                        if e.is_commute_event:
-                            p.emoji = emojize(':automobile:')
+
+                    if e.start <= p.calc_start and e.end >= p.calc_end:
+
+                        log(f"e.start: {e.start}", level="debug")
+                        log(f"e.end: {e.end}", level="debug")
+                        log(f"p.calc_start: {p.calc_start}", level="debug")
+                        log(f"p.calc_end: {p.calc_end}", level="debug")
+
+                        c = PomodoroCalendarEvent(e.start, e.end, e.text, is_commute_event=e.is_commute_event)
+
+                        log(
+                            f"replacing pomodoro: {p.description} with {c.description}",
+                            level="debug",
+                        )
+
+                        self.replace_pomodoro(p, c)
 
     def parse_pomodoros(self, raw_lines) -> None:
         self.pomodoros = []
@@ -75,7 +90,7 @@ class Dispatcher:
     def current_pomodoro(self):
         return self.get_pomodoro(current_time())
 
-    def run_pomodoro(self, pomodoro) -> None:
+    def run_pomodoro(self, pomodoro: Union[Pomodoro, PomodoroCalendarEvent]) -> None:
         if not pomodoro:
             self.active_pomodoro = None
             return None
@@ -96,7 +111,6 @@ class Dispatcher:
         log(f"Dispatcher tick event {time}", level="debug")
 
         if self.active_pomodoro:
-
             active_minutes = int(time - self.active_pomodoro.startint)
             if active_minutes >= config.POMODORO_DURATION:
                 if self.active_pomodoro.next:
@@ -106,7 +120,7 @@ class Dispatcher:
         if p:
             self.check_and_fire(p)
 
-    def check_and_fire(self, pomodoro: Pomodoro) -> None:
+    def check_and_fire(self, pomodoro: Union[Pomodoro, PomodoroCalendarEvent]) -> None:
         if not pomodoro.active:
             self.run_pomodoro(pomodoro)
 
@@ -156,19 +170,16 @@ class Dispatcher:
         s = []
 
         if self.calendar_events.have_allday_events:
-            s.append(f'Shedule for {self.day.strftime(config.DATE_FORMAT_HUMAN)}:\n')
+            s.append(f"Schedule for {self.day.strftime(config.DATE_FORMAT_HUMAN)}:\n")
             for e in self.calendar_events:
                 if e.all_day:
                     s.append(e.text)
-            s.append('')  # for line break in output
-        
-
+            s.append("")  # for line break in output
 
         pool = self.pomodoros
         if united:
             pool = self.united_pomodoros
 
-        
         for p in pool:
             s.append(p.description)
         return "\n".join(s)

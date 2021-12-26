@@ -16,10 +16,7 @@ def test_midnight():
 def test_incomplete_input_string():
     with pytest.raises(ValueError) as excinfo:
         p = Pomodoro('"0:00","0:30","free time"')
-    assert (
-        str(excinfo.value)
-        == "bad input string, cannot split to 4 items separated by comma"
-    )
+    assert str(excinfo.value) == "bad input string, cannot split to 4 items separated by comma"
 
 
 def test_empty_string():

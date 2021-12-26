@@ -34,11 +34,16 @@ class config:
 
     # logging setup, more in log.py
     LOG_FILE_PATH = f"{Path.cwd()}/logs/log.log"
+    LOG_LEVEL = "INFO"
 
     # notifications
     TELEGRAM_ENABLE_SENDING = True
-    TELEGRAM_TOKEN = os.environ.get("TELEGRAM_HTTP_TOKEN")
-    TELEGRAM_USER = os.environ.get("TELEGRAM_USERID")
+    TELEGRAM_TOKEN = str(os.environ.get("TELEGRAM_HTTP_TOKEN"))
+    TELEGRAM_USER = str(os.environ.get("TELEGRAM_USERID"))
+    TELEGRAM_DELETE_NOTIFICATIONS = False  # after X seconds
+
+    if TESTING_MODE:
+        TELEGRAM_ENABLE_SENDING = False
 
     PAUSED = False
     SCHEDULE_FILE_PATH = f"{Path.cwd()}/storage/schedule.txt"

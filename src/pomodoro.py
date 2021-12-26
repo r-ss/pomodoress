@@ -7,7 +7,10 @@ from config import config
 from notification import Notification
 from log import log
 
+from datetime import datetime
+
 import dateutil.parser
+from dateutil.relativedelta import relativedelta
 
 
 class Pomodoro:
@@ -19,9 +22,7 @@ class Pomodoro:
         rawrow = re.sub(r'["/\n]', "", rawrow).split(",")
 
         if len(rawrow) != 4:
-            raise ValueError(
-                "bad input string, cannot split to 4 items separated by comma"
-            )
+            raise ValueError("bad input string, cannot split to 4 items separated by comma")
 
         self.start, self.startint = rawrow[0], midnight_fix(rawrow[0])
         self.end, self.endint = rawrow[1], midnight_fix(rawrow[1])
@@ -53,18 +54,14 @@ class Pomodoro:
         return self.text
 
     def start_routine(self) -> None:
-        # log('> start routine', self.description)
+        log(f"> start routine {self.description}")
 
         # not send notification if we have long uuproductive activities in a row
-        if any(w in self.text for w in config.UNPRODUCTIVE_ACTIVITIES) and any(
-            z in self.previous.text for z in config.UNPRODUCTIVE_ACTIVITIES
-        ):
+        if any(w in self.text for w in config.UNPRODUCTIVE_ACTIVITIES) and any(z in self.previous.text for z in config.UNPRODUCTIVE_ACTIVITIES):
             self.rest_started = True
             return
 
-        pomodoro_notification = Notification(
-            f"{self.emoji} {self.start} - {self.formtext}"
-        )
+        pomodoro_notification = Notification(f"{self.emoji} {self.start} - {self.formtext}")
         self.notified = True
 
         self.active = True
@@ -75,8 +72,16 @@ class Pomodoro:
 
     @property
     def calc_start(self):
-        return config.TZ.localize(dateutil.parser.parse(self.start))
+        t = config.TZ.localize(dateutil.parser.parse(self.start))
+        # today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
+        if t.hour <= 4:
+            t += relativedelta(days=1)
+        return t
 
     @property
     def calc_end(self):
-        return config.TZ.localize(dateutil.parser.parse(self.end))
+        t = config.TZ.localize(dateutil.parser.parse(self.end))
+        # today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
+        if t.hour <= 4:
+            t += relativedelta(days=1)
+        return t

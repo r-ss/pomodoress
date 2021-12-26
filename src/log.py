@@ -5,7 +5,7 @@ from config import config
 logger.remove(0)
 logger.add(
     sys.stderr,
-    level="INFO",
+    level=config.LOG_LEVEL,
     format="<green>{time:YYYY-MM-DD at HH:mm:ss}</green> | <level>{message}</level>",
     colorize=True,
     backtrace=True,
@@ -13,14 +13,15 @@ logger.add(
 )
 logger.add(
     config.LOG_FILE_PATH,
+    level=config.LOG_LEVEL,
     rotation="3 MB",
     retention="10 days",
-    format="{time} {level} {message}",
+    format="{time:YYYY-MM-DD at HH:mm:ss} {level} {message}",
 )
 
 
 def log(message: str, level: str = "info") -> None:
-    if level == "debug":
+    if level.lower() == "debug":
         logger.debug(message)
-    if level == "info":
+    if level.lower() == "info":
         logger.info(message)

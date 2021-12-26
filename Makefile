@@ -1,4 +1,4 @@
-.DEFAULT_GOAL := say_hello
+ .DEFAULT_GOAL := say_hello
 # .PHONY: test
 
 # .PHONY: all say_hello generate clean
@@ -26,5 +26,5 @@ deploy:
 
 lint:
 	@echo "Linting..."
-	poetry run black src/
-	poetry run flake8 src/
+	poetry run black --line-length 220 src/
+	# poetry run flake8 src/

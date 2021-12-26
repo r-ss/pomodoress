@@ -39,10 +39,7 @@ def test_bad_input():
     ds = Dispatcher()
     with pytest.raises(ValueError) as excinfo:
         ds.parse_pomodoros("some bad input")
-    assert (
-        str(excinfo.value)
-        == "bad input string, cannot split to 4 items separated by comma"
-    )
+    assert str(excinfo.value) == "bad input string, cannot split to 4 items separated by comma"
 
 
 def test_tick():
@@ -73,8 +70,8 @@ def test_many_ticks():
 
 def test_print_schedule():
     ds = Dispatcher()
-    with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
-        ds.parse_pomodoros(f.readlines())
+    # with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
+    #     ds.parse_pomodoros(f.readlines())
 
     cp = ds.current_pomodoro()
     ds.run_pomodoro(cp)
@@ -89,8 +86,9 @@ def test_print_schedule():
 
 def test_print_united_pomodoros():
     ds = Dispatcher()
-    with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
-        ds.parse_pomodoros(f.readlines())
+    # with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
+    # ds.parse_pomodoros(f.readlines())
+    # ds.load_schedule()
 
     cp = ds.current_pomodoro()
     ds.run_pomodoro(cp)
