@@ -44,8 +44,7 @@ def test_bad_input():
 
 def test_tick():
     ds = Dispatcher()
-    with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
-        ds.parse_pomodoros(f.readlines())
+    # ds.load_schedule()
 
     ds.tick(str(2400))
     assert ds.active_pomodoro.fingerprint == "fingerprint 0:00 - 0:30 - free time"
@@ -53,8 +52,7 @@ def test_tick():
 
 def test_many_ticks():
     ds = Dispatcher()
-    with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
-        ds.parse_pomodoros(f.readlines())
+    # ds.load_schedule()
 
     a = 600
     z = 3000

@@ -27,6 +27,16 @@ class Pomodoro:
         self.start, self.startint = rawrow[0], midnight_fix(rawrow[0])
         self.end, self.endint = rawrow[1], midnight_fix(rawrow[1])
 
+        def calc_dt_from_str(str):
+            t = config.TZ.localize(dateutil.parser.parse(str))
+            # today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
+            if t.hour <= 5:
+                t += relativedelta(days=1)
+            return t
+
+        self.start_as_datetime = calc_dt_from_str(self.start)
+        self.end_as_datetime = calc_dt_from_str(self.end)
+
         self.emoji = rawrow[2].strip()
         self.text = rawrow[3]
         self.fingerprint = f"fingerprint {self.start} - {self.end} - {self.text}"
@@ -70,18 +80,18 @@ class Pomodoro:
         # log('> end routine', self.description)
         self.active = False
 
-    @property
-    def calc_start(self):
-        t = config.TZ.localize(dateutil.parser.parse(self.start))
-        # today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
-        if t.hour <= 4:
-            t += relativedelta(days=1)
-        return t
+    # @property
+    # def calc_start(self):
+    #     t = config.TZ.localize(dateutil.parser.parse(self.start))
+    #     # today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
+    #     if t.hour <= 5:
+    #         t += relativedelta(days=1)
+    #     return t
 
-    @property
-    def calc_end(self):
-        t = config.TZ.localize(dateutil.parser.parse(self.end))
-        # today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
-        if t.hour <= 4:
-            t += relativedelta(days=1)
-        return t
+    # @property
+    # def calc_end(self):
+    #     t = config.TZ.localize(dateutil.parser.parse(self.end))
+    #     # today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
+    #     if t.hour <= 5:
+    #         t += relativedelta(days=1)
+    #     return t

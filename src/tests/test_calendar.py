@@ -17,31 +17,31 @@ from emoji import emojize
 
 def test_today():
     ds = Dispatcher()
-    with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
-        ds.parse_pomodoros(f.readlines())
 
     today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)  # + relativedelta(days=1)
     cal = GoogleCalendar()
     calendar_events = cal.load_for_day(today)
 
-    if calendar_events.have_allday_events:
-        print("Today:\n")
-        for e in calendar_events:
-            if e.all_day:
-                print(e.text)
+    if calendar_events:
+        if calendar_events.have_allday_events:
+            print("Today:\n")
+            for e in calendar_events:
+                if e.all_day:
+                    print(e.text)
 
     print(f"\nShedule for {today.strftime(config.DATE_FORMAT_HUMAN)}:\n")
 
-    for p in ds.pomodoros:
-        for e in calendar_events:
-            if not e.all_day:
-                if e.start <= p.calc_start and e.end > p.calc_start + relativedelta(minutes=29):
-                    # line = f"cal {e.description}"
-                    # p = Pomodoro(f'11:00,11:30,tdd,commute')
-                    p.emoji = emojize(":calendar:")
-                    p.text = f"{e.text} (was {p.text})"
-                    if e.is_commute_event:
-                        p.emoji = emojize(":automobile:")
+    if calendar_events:
+        for p in ds.pomodoros:
+            for e in calendar_events:
+                if not e.all_day:
+                    if e.start <= p.start_as_datetime and e.end > p.end_as_datetime + relativedelta(minutes=29):
+                        # line = f"cal {e.description}"
+                        # p = Pomodoro(f'11:00,11:30,tdd,commute')
+                        p.emoji = emojize(":calendar:")
+                        p.text = f"{e.text} (was {p.text})"
+                        if e.is_commute_event:
+                            p.emoji = emojize(":automobile:")
 
     cp = ds.current_pomodoro()
     ds.run_pomodoro(cp)
@@ -83,7 +83,7 @@ def test_fake():
     for p in ds.pomodoros:
         for e in calendar_events:
             if not e.all_day:
-                if e.start <= p.calc_start and e.end > p.calc_start + relativedelta(minutes=29):
+                if e.start <= p.start_as_datetime and e.end > p.end_as_datetime + relativedelta(minutes=29):
                     # line = f"cal {e.description}"
                     # p = Pomodoro(f'11:00,11:30,tdd,commute')
                     p.emoji = emojize(":calendar:")

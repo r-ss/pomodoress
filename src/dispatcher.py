@@ -7,8 +7,8 @@ from pomodoro_calendar_event import PomodoroCalendarEvent
 from config import config
 from log import log
 
-from dateutil.relativedelta import relativedelta
-from emoji import emojize
+# from dateutil.relativedelta import relativedelta
+# from emoji import emojize
 
 from misc import current_time, midnight_fix
 
@@ -35,6 +35,7 @@ class Dispatcher:
 
         self.load_calendar()
         self.merge_calendar_with_schedule()
+        self.setup_prev_and_next()
 
     def load_calendar(self) -> None:
         self.calendar = GoogleCalendar()
@@ -48,16 +49,18 @@ class Dispatcher:
         self.pomodoros = [b if p.start == a.start else p for p in self.pomodoros]
 
     def merge_calendar_with_schedule(self) -> None:
+        if not self.calendar_events:
+            return
         for p in self.pomodoros:
             for e in self.calendar_events:
                 if not e.all_day:
 
-                    if e.start <= p.calc_start and e.end >= p.calc_end:
+                    if e.start <= p.start_as_datetime and e.end >= p.end_as_datetime:
 
                         log(f"e.start: {e.start}", level="debug")
                         log(f"e.end: {e.end}", level="debug")
-                        log(f"p.calc_start: {p.calc_start}", level="debug")
-                        log(f"p.calc_end: {p.calc_end}", level="debug")
+                        log(f"p.start_as_datetime: {p.start_as_datetime}", level="debug")
+                        log(f"p.end_as_datetime: {p.end_as_datetime}", level="debug")
 
                         c = PomodoroCalendarEvent(e.start, e.end, e.text, is_commute_event=e.is_commute_event)
 
@@ -68,11 +71,7 @@ class Dispatcher:
 
                         self.replace_pomodoro(p, c)
 
-    def parse_pomodoros(self, raw_lines) -> None:
-        self.pomodoros = []
-        for line in raw_lines:
-            self.pomodoros.append(Pomodoro(line))
-
+    def setup_prev_and_next(self) -> None:
         # filling .previous value in every pomodoro
         for i in range(1, len(self.pomodoros)):
             self.pomodoros[i].previous = self.pomodoros[i - 1]
@@ -80,6 +79,21 @@ class Dispatcher:
         # filling .next value in every pomodoro
         for i in range(len(self.pomodoros) - 1):
             self.pomodoros[i].next = self.pomodoros[i + 1]
+
+
+    def parse_pomodoros(self, raw_lines) -> None:
+        self.pomodoros = []
+        for line in raw_lines:
+            self.pomodoros.append(Pomodoro(line))
+
+        # filling .previous value in every pomodoro
+        # for i in range(1, len(self.pomodoros)):
+        #     self.pomodoros[i].previous = self.pomodoros[i - 1]
+
+        # # filling .next value in every pomodoro
+        # for i in range(len(self.pomodoros) - 1):
+        #     self.pomodoros[i].next = self.pomodoros[i + 1]
+        # self.setup_prev_and_next()
 
     def get_pomodoro(self, time):
         if type(time) == str:
