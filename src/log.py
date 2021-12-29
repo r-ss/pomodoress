@@ -21,7 +21,7 @@ logger.add(
 
 
 def log(message: str, level: str = "info") -> None:
-    
+
     match level.lower():
         case "debug":
             logger.debug(message)

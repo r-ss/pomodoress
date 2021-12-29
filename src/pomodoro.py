@@ -1,6 +1,7 @@
 import re
 
 from rest import Rest
+
 # from misc import midnight_fix
 from config import config
 
@@ -8,6 +9,7 @@ from notification import Notification
 from log import log
 
 from utils import time_from_hh_mm_string
+
 
 class Pomodoro:
     def __init__(self, rawrow: str) -> None:
@@ -65,8 +67,8 @@ class Pomodoro:
     def end_fmt(self) -> str:
         return self.end.strftime("%H:%M")
 
-    def start_routine(self) -> None:
-        log(f"> start routine {self.description}", level="debug")
+    def run(self) -> None:
+        log(f"> start routine {self.description}", level="info")
 
         # not send notification if we have long uuproductive activities in a row
         if any(w in self.text for w in config.UNPRODUCTIVE_ACTIVITIES) and any(z in self.previous.text for z in config.UNPRODUCTIVE_ACTIVITIES):
@@ -77,6 +79,6 @@ class Pomodoro:
         self.notified = True
         self.active = True
 
-    def end_routine(self) -> None:
-        log(f'> end routine {self.description}')
+    def finish(self) -> None:
+        log(f"> end routine {self.description}", level="info")
         self.active = False

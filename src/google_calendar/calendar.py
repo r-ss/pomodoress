@@ -106,7 +106,7 @@ class GoogleCalendar:
             log("An error in GoogleCalendar occurred: %s" % error)
 
     def load_fake(self):
-        log('loading fake calendar events')
+        log("loading fake calendar events")
 
         cal_day_helper = CalendarDayHelper()
 

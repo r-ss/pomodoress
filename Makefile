@@ -26,5 +26,5 @@ deploy:
 
 lint:
 	@echo "Linting..."
-	poetry run black --line-length 220 src/
+	poetry run black --line-length 220 --target-version py310 src/
 	# poetry run flake8 src/

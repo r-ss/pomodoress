@@ -23,16 +23,13 @@ def singleton(cls, *args, **kw):
 
     return _singleton
 
+
 def time_from_hh_mm_string(hh_mm: str) -> datetime:
     time = config.TZ.localize(dateutil.parser.parse(hh_mm))
     if time.hour < 4:
         time += relativedelta(days=1)
     return time
 
+
 def current_time(forcedtime=None):
-    # if forcedtime:
-    #     return midnight_fix(forcedtime)
-    # time = datetime.now(config.TZ)
-    # time = time.strftime("%H%M")
-    # time = midnight_fix(time)
     return datetime.now(config.TZ)

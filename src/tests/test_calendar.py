@@ -7,7 +7,6 @@ from config import config
 from emoji import emojize
 
 
-
 def test_today():
     ds = Dispatcher()
 
@@ -78,6 +77,5 @@ def test_fake():
         if p.active:
             caret = ">> "
         line = f"{caret}{p.description}"
-
 
         print(line)

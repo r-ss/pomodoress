@@ -9,6 +9,7 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
 
 from apscheduler.schedulers.background import BackgroundScheduler
+
 # from apscheduler.schedulers.blocking import BlockingScheduler
 
 from apscheduler.executors.pool import ProcessPoolExecutor
@@ -17,15 +18,14 @@ from dispatcher import Dispatcher
 
 
 import sentry_sdk
+
 sentry_sdk.init(
     "https://4033d8979dd24a978d544c78e3275fea@o519274.ingest.sentry.io/6127255",
-
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for performance monitoring.
     # We recommend adjusting this value in production.
-    traces_sample_rate=1.0
+    traces_sample_rate=1.0,
 )
-
 
 
 executors = {

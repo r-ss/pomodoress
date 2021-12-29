@@ -1,5 +1,7 @@
 from typing import Union
-from datetime import datetime
+from datetime import datetime, timedelta
+
+from dateutil.relativedelta import relativedelta
 from google_calendar.calendar import GoogleCalendar
 from pomodoro import Pomodoro
 from pomodoro_calendar_event import PomodoroCalendarEvent
@@ -29,7 +31,7 @@ class Dispatcher:
         else:
             self.load_schedule()
 
-        self.previous_pomodoro = None
+        # self.previous_pomodoro = None
         self.active_pomodoro = None
         self.reformatted = False
 
@@ -47,7 +49,6 @@ class Dispatcher:
             self.calendar_events = self.calendar.load_fake()
         else:
             self.calendar_events = self.calendar.load_for_day(self.day)
-        
 
     def replace_pomodoro(self, a, b):
         self.pomodoros = [b if p.start == a.start else p for p in self.pomodoros]
@@ -84,7 +85,6 @@ class Dispatcher:
         for i in range(len(self.pomodoros) - 1):
             self.pomodoros[i].next = self.pomodoros[i + 1]
 
-
     def parse_pomodoros(self, raw_lines) -> None:
         self.pomodoros = []
         for line in raw_lines:
@@ -99,15 +99,13 @@ class Dispatcher:
         #     self.pomodoros[i].next = self.pomodoros[i + 1]
         # self.setup_prev_and_next()
 
-    def get_pomodoro(self, time: Union[datetime, str]) -> Union[Pomodoro,None]:
+    def get_pomodoro(self, time: Union[datetime, str]) -> Union[Pomodoro, None]:
 
         if type(time) == str:
             time = time_from_hh_mm_string(time)
 
         # if time.tzinfo is None or time.tzinfo.utcoffset(d) is None:
         #     time = config.TZ.localize(time)
-
-        
 
         # time = midnight_fix(time)
         for p in self.pomodoros:
@@ -118,21 +116,19 @@ class Dispatcher:
     def current_pomodoro(self):
         return self.get_pomodoro(current_time())
 
-    def run_pomodoro(self, pomodoro: Union[Pomodoro, PomodoroCalendarEvent]) -> None:
+    def run_pomodoro(self, pomodoro: Union[Pomodoro, PomodoroCalendarEvent]):
         if not pomodoro:
             self.active_pomodoro = None
-            return None
+            return
 
         if self.active_pomodoro:
             if self.active_pomodoro == pomodoro:
                 return
-            if self.previous_pomodoro:
-                self.previous_pomodoro.end_routine()
-            self.previous_pomodoro = self.active_pomodoro
+            self.active_pomodoro.finish()
 
         self.active_pomodoro = pomodoro
         self.reformat_pomodoros()
-        pomodoro.start_routine()
+        pomodoro.run()
 
     def tick(self, time=None):
 
@@ -146,7 +142,7 @@ class Dispatcher:
 
         if self.active_pomodoro:
             active_time = time - self.active_pomodoro.start
-            if active_time >= self.active_pomodoro.duration:
+            if active_time >= timedelta(minutes=25):
                 if self.active_pomodoro.next:
                     self.active_pomodoro.rest.run()
 
@@ -202,7 +198,7 @@ class Dispatcher:
         """used for print shedule to user on request"""
 
         s = []
-        
+
         if self.calendar_events:
             if self.calendar_events.have_allday_events:
                 s.append(f"Schedule for {self.day.strftime(config.DATE_FORMAT_HUMAN)}:\n")

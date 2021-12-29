@@ -43,20 +43,14 @@ class Rest:
         if self.active:
             return
 
-        # CWLog.send_cw_log(f'Rest start for: { self.parent_pomodoro.text }')
-
-        # if self.rest_started:
-        # return # return early to prevent multiple notifications
-
-        # do we actually need rest here? If we have free time, no need to announce Rest
         if any(w in self.parent_pomodoro.text for w in config.UNPRODUCTIVE_ACTIVITIES):
             self.active = True
             return
 
         # also not send rest announces before 10:00
-        # if self.parent_pomodoro.start < 1000:
-        #     self.active = True
-        #     return
+        if self.parent_pomodoro.start.hour < 10:
+            self.active = True
+            return
 
         # if SSMParameter.get() == f'rest for {self.parent_pomodoro.fingerprint}':
         #     CWLog.send_cw_log(f'Rest skip because ssmparameter says it already fired: { self.parent_pomodoro.text }')
