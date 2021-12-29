@@ -37,9 +37,12 @@ class Dispatcher:
         self.merge_calendar_with_schedule()
 
     def load_calendar(self) -> None:
-
         self.calendar = GoogleCalendar()
-        self.calendar_events = self.calendar.load_for_day(self.day)
+        if config.TESTING_MODE:
+            self.calendar_events = self.calendar.load_fake()
+        else:
+            self.calendar_events = self.calendar.load_for_day(self.day)
+        
 
     def replace_pomodoro(self, a, b):
         self.pomodoros = [b if p.start == a.start else p for p in self.pomodoros]

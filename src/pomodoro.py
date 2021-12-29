@@ -54,7 +54,7 @@ class Pomodoro:
         return self.text
 
     def start_routine(self) -> None:
-        log(f"> start routine {self.description}")
+        log(f"> start routine {self.description}", level="debug")
 
         # not send notification if we have long uuproductive activities in a row
         if any(w in self.text for w in config.UNPRODUCTIVE_ACTIVITIES) and any(z in self.previous.text for z in config.UNPRODUCTIVE_ACTIVITIES):

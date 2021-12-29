@@ -39,4 +39,4 @@ class Notification:
                     self.thread = Timer(self.delete_delay, delete_notification_after_delay, [self])
                     self.thread.start()
         else:
-            log(f"fake telegram - {self.message}")
+            log(f"fake telegram - {self.message}", level="warning")

@@ -66,7 +66,7 @@ class GoogleCalendar:
             # tmax = day_plus_1.isoformat()+ "Z"
 
             # one_day = round(time.time())+86400
-            log("Getting the upcoming events")
+            log("Getting the upcoming events", level="debug")
 
             events_result = (
                 service.events()
@@ -106,18 +106,19 @@ class GoogleCalendar:
             log("An error in GoogleCalendar occurred: %s" % error)
 
     def load_fake(self):
+        log('loading fake calendar events')
 
         cal_day_helper = CalendarDayHelper()
 
-        cal_day_helper.add_event(CalendarEvent("2021-12-24", "2021-12-25", "All day some-event"))
-        cal_day_helper.add_event(CalendarEvent("2021-12-24", "2021-12-25", "Another delivery"))
+        cal_day_helper.add_event(CalendarEvent("2021-12-26", "2021-12-27", "All day some-event"))
+        cal_day_helper.add_event(CalendarEvent("2021-12-26", "2021-12-27", "Another delivery"))
         cal_day_helper.add_event(
             CalendarEvent(
-                "2021-12-24T15:00:00+03:00",
-                "2021-12-24T16:00:00+03:00",
+                "2021-12-26T15:00:00+03:00",
+                "2021-12-26T16:00:00+03:00",
                 "Тестовое календарное событие commute 2:00, back 2",
             )
         )
-        cal_day_helper.add_event(CalendarEvent("2021-12-24T19:00:00+03:00", "2021-12-24T22:00:00+03:00", "Formula-1"))
+        cal_day_helper.add_event(CalendarEvent("2021-12-26T19:00:00+03:00", "2021-12-26T22:00:00+03:00", "Formula-1"))
 
         return cal_day_helper

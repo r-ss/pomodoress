@@ -25,3 +25,5 @@ def log(message: str, level: str = "info") -> None:
         logger.debug(message)
     if level.lower() == "info":
         logger.info(message)
+    if level.lower().startswith('warn'):
+        logger.warning(message)

@@ -9,46 +9,27 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.schedulers.blocking import BlockingScheduler
+# from apscheduler.schedulers.blocking import BlockingScheduler
 
-# from apscheduler.schedulers.background import BackgroundScheduler
-# from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.executors.pool import ProcessPoolExecutor
 
 from dispatcher import Dispatcher
 
-# jobstores = {
-#     'mongo': {'type': 'mongodb'},
-#     'default': SQLAlchemyJobStore(url='sqlite:///jobs.sqlite')
-# }
 executors = {
     "default": {"type": "threadpool", "max_workers": 5},
     "processpool": ProcessPoolExecutor(max_workers=1),
 }
 job_defaults = {"coalesce": False, "max_instances": 1}
 scheduler = BackgroundScheduler()
-
-# .. do something else here, maybe add jobs etc.
+# scheduler = BlockingScheduler()
 
 scheduler.configure(executors=executors, job_defaults=job_defaults, timezone=config.TZ)
 
 
-# job_defaults = {"coalesce": False, "max_instances": 1}
-
-# scheduler = BlockingScheduler()
-# scheduler.configure(job_defaults=job_defaults, timezone=config.TZ)
-
-
 dispatcher = Dispatcher()
-
 updater = Updater(config.TELEGRAM_TOKEN)
 
-# Define a few command handlers. These usually take the two arguments update and
-# context. Error handlers also receive the raised TelegramError object in error.
-# Best practice would be to replace context with an underscore,
-# since context is an unused local variable.
-# This being an example and not having context present confusing beginners,
-# we decided to have it present as context.
+
 def start(update: Update, context: CallbackContext) -> None:
     config.PAUSED = False
     update.message.reply_text("started")
@@ -69,11 +50,6 @@ def reset_day_event():
     dispatcher = None
     dispatcher = Dispatcher()
     config.PAUSED = False
-
-
-# def test():
-#     log('test func')
-#     log(config.SCHEDULE_FILE_PATH)
 
 
 def print_current_pomodoro(update: Update, context: CallbackContext):
