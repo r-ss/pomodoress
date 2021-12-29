@@ -1,3 +1,9 @@
+from config import config
+from datetime import datetime
+import dateutil.parser
+from dateutil.relativedelta import relativedelta
+
+
 def bytes_to_human_readable_size(num, suffix="b"):
     for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
         if abs(num) < 1024.0:
@@ -16,3 +22,17 @@ def singleton(cls, *args, **kw):
         return instances[cls]
 
     return _singleton
+
+def time_from_hh_mm_string(hh_mm: str) -> datetime:
+    time = config.TZ.localize(dateutil.parser.parse(hh_mm))
+    if time.hour < 4:
+        time += relativedelta(days=1)
+    return time
+
+def current_time(forcedtime=None):
+    # if forcedtime:
+    #     return midnight_fix(forcedtime)
+    # time = datetime.now(config.TZ)
+    # time = time.strftime("%H%M")
+    # time = midnight_fix(time)
+    return datetime.now(config.TZ)

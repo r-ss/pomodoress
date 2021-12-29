@@ -1,17 +1,13 @@
 import re
 
 from rest import Rest
-from misc import midnight_fix
+# from misc import midnight_fix
 from config import config
 
 from notification import Notification
 from log import log
 
-from datetime import datetime
-
-import dateutil.parser
-from dateutil.relativedelta import relativedelta
-
+from utils import time_from_hh_mm_string
 
 class Pomodoro:
     def __init__(self, rawrow: str) -> None:
@@ -24,22 +20,12 @@ class Pomodoro:
         if len(rawrow) != 4:
             raise ValueError("bad input string, cannot split to 4 items separated by comma")
 
-        self.start, self.startint = rawrow[0], midnight_fix(rawrow[0])
-        self.end, self.endint = rawrow[1], midnight_fix(rawrow[1])
-
-        def calc_dt_from_str(str):
-            t = config.TZ.localize(dateutil.parser.parse(str))
-            # today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
-            if t.hour <= 5:
-                t += relativedelta(days=1)
-            return t
-
-        self.start_as_datetime = calc_dt_from_str(self.start)
-        self.end_as_datetime = calc_dt_from_str(self.end)
+        self.start = time_from_hh_mm_string(rawrow[0])
+        self.end = time_from_hh_mm_string(rawrow[1])
 
         self.emoji = rawrow[2].strip()
         self.text = rawrow[3]
-        self.fingerprint = f"fingerprint {self.start} - {self.end} - {self.text}"
+        self.fingerprint = f"fingerprint {self.start_fmt} - {self.end_fmt} - {self.text}"
 
         self.active = False
         self.reformatted = False
@@ -49,19 +35,35 @@ class Pomodoro:
         # Rest object is in response for 5-minutes resting time window when pomodoros 25 minutes passes
         self.rest = Rest(self)  # pass this pomodoro as parent_pomodoro for Rest object
 
-        self.duration = config.POMODORO_DURATION  # default pomodoro duration 25 minutes
+        # self.duration = config.POMODORO_DURATION  # default pomodoro duration 25 minutes
         self.previous = None  # previous Pomodoro in queue
         self.next = None  # next Pomodoro in queue
 
     @property
     def description(self) -> str:
-        return f"{self.emoji} {self.start} - {self.end} - {self.formtext}"
+        return f"{self.emoji} {self.start_fmt} - {self.end_fmt} - {self.formtext}"
+
+    @property
+    def extended_description(self) -> str:
+        return f"{self.emoji} {self.start} - {self.end} - duration {self.duration} - {self.text}"
 
     @property
     def formtext(self) -> str:
         if self.reformatted:
             return self.reformatted_text
         return self.text
+
+    @property
+    def duration(self):
+        return self.end - self.start
+
+    @property
+    def start_fmt(self) -> str:
+        return self.start.strftime("%H:%M")
+
+    @property
+    def end_fmt(self) -> str:
+        return self.end.strftime("%H:%M")
 
     def start_routine(self) -> None:
         log(f"> start routine {self.description}", level="debug")
@@ -71,27 +73,10 @@ class Pomodoro:
             self.rest_started = True
             return
 
-        pomodoro_notification = Notification(f"{self.emoji} {self.start} - {self.formtext}")
+        pomodoro_notification = Notification(f"{self.emoji} {self.start.strftime('%H:%M')} - {self.formtext}")
         self.notified = True
-
         self.active = True
 
     def end_routine(self) -> None:
-        # log('> end routine', self.description)
+        log(f'> end routine {self.description}')
         self.active = False
-
-    # @property
-    # def calc_start(self):
-    #     t = config.TZ.localize(dateutil.parser.parse(self.start))
-    #     # today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
-    #     if t.hour <= 5:
-    #         t += relativedelta(days=1)
-    #     return t
-
-    # @property
-    # def calc_end(self):
-    #     t = config.TZ.localize(dateutil.parser.parse(self.end))
-    #     # today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
-    #     if t.hour <= 5:
-    #         t += relativedelta(days=1)
-    #     return t

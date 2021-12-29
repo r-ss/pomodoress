@@ -10,7 +10,7 @@ def test_basic():
 
 def test_midnight():
     p = Pomodoro('"0:00","0:30","","free time\n"')
-    assert p.fingerprint == "fingerprint 0:00 - 0:30 - free time"
+    assert p.fingerprint == "fingerprint 00:00 - 00:30 - free time"
 
 
 def test_incomplete_input_string():

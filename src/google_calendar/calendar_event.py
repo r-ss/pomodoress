@@ -46,14 +46,19 @@ class CalendarEvent:
 class CalendarDayHelper:
     def __init__(self) -> None:
         self.events = []
-        self.have_allday_events = False
+        # self.have_allday_events = None
+
+    @property
+    def have_allday_events(self):
+        for event in self.events:
+            if event.all_day:
+                return True
+        return False
 
     def add_event(self, event, parse=True):
         self.events.append(event)
         if parse:
             self.parse_event_text(event)
-        if event.all_day:
-            self.have_allday_events = True
 
     def parse_event_text(self, event):
         def get_delta(research):

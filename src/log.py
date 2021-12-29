@@ -21,9 +21,15 @@ logger.add(
 
 
 def log(message: str, level: str = "info") -> None:
-    if level.lower() == "debug":
-        logger.debug(message)
-    if level.lower() == "info":
-        logger.info(message)
-    if level.lower().startswith('warn'):
-        logger.warning(message)
+    
+    match level.lower():
+        case "debug":
+            logger.debug(message)
+        case "warn":
+            logger.warning(message)
+        case "warning":
+            logger.warning(message)
+        case "error":
+            logger.error(message)
+        case _:
+            logger.info(message)

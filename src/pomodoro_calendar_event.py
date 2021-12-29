@@ -6,7 +6,7 @@ from config import config
 from notification import Notification
 from log import log
 
-from misc import midnight_fix
+# from misc import midnight_fix
 
 # import dateutil.parser
 
@@ -20,13 +20,8 @@ from emoji import emojize
 class PomodoroCalendarEvent(Pomodoro):
     def __init__(self, start, end, text, is_commute_event=False) -> None:
 
-        self.start_as_datetime = start
-        self.start = start.strftime("%H:%M")
-        self.startint = midnight_fix(self.start)
-
-        self.end_as_datetime = end
-        self.end = end.strftime("%H:%M")
-        self.endint = midnight_fix(self.end)
+        self.start = start
+        self.end = end
 
         self.emoji = emojize(":calendar:")
         self.is_commute_event = is_commute_event
@@ -47,10 +42,6 @@ class PomodoroCalendarEvent(Pomodoro):
 
         self.previous = None  # previous Pomodoro in queue
         self.next = None  # next Pomodoro in queue
-
-    @property
-    def duration(self):
-        return self.end_as_datetime - self.start_as_datetime
 
     @property
     def description(self) -> str:

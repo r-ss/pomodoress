@@ -37,7 +37,7 @@ class Rest:
             return line
         return ""
 
-    def start(self) -> None:
+    def run(self) -> None:
         """fires when pomodoros' 25 minutes ends and rest time for 5 minutes starts"""
 
         if self.active:
@@ -54,9 +54,9 @@ class Rest:
             return
 
         # also not send rest announces before 10:00
-        if self.parent_pomodoro.startint < 1000:
-            self.active = True
-            return
+        # if self.parent_pomodoro.start < 1000:
+        #     self.active = True
+        #     return
 
         # if SSMParameter.get() == f'rest for {self.parent_pomodoro.fingerprint}':
         #     CWLog.send_cw_log(f'Rest skip because ssmparameter says it already fired: { self.parent_pomodoro.text }')

@@ -7,10 +7,14 @@ from pomodoro_calendar_event import PomodoroCalendarEvent
 from config import config
 from log import log
 
+# import dateutil.parser
 # from dateutil.relativedelta import relativedelta
+
+from utils import time_from_hh_mm_string
+
 # from emoji import emojize
 
-from misc import current_time, midnight_fix
+from utils import current_time
 
 
 class Dispatcher:
@@ -55,12 +59,12 @@ class Dispatcher:
             for e in self.calendar_events:
                 if not e.all_day:
 
-                    if e.start <= p.start_as_datetime and e.end >= p.end_as_datetime:
+                    if e.start <= p.start and e.end >= p.end:
 
                         log(f"e.start: {e.start}", level="debug")
                         log(f"e.end: {e.end}", level="debug")
-                        log(f"p.start_as_datetime: {p.start_as_datetime}", level="debug")
-                        log(f"p.end_as_datetime: {p.end_as_datetime}", level="debug")
+                        log(f"p.start: {p.start}", level="debug")
+                        log(f"p.end: {p.end}", level="debug")
 
                         c = PomodoroCalendarEvent(e.start, e.end, e.text, is_commute_event=e.is_commute_event)
 
@@ -95,12 +99,19 @@ class Dispatcher:
         #     self.pomodoros[i].next = self.pomodoros[i + 1]
         # self.setup_prev_and_next()
 
-    def get_pomodoro(self, time):
-        if type(time) == str:
-            time = midnight_fix(time)
+    def get_pomodoro(self, time: Union[datetime, str]) -> Union[Pomodoro,None]:
 
+        if type(time) == str:
+            time = time_from_hh_mm_string(time)
+
+        # if time.tzinfo is None or time.tzinfo.utcoffset(d) is None:
+        #     time = config.TZ.localize(time)
+
+        
+
+        # time = midnight_fix(time)
         for p in self.pomodoros:
-            if p.startint <= time and p.endint > time:
+            if p.start <= time and p.end > time:
                 return p
         return None
 
@@ -123,15 +134,21 @@ class Dispatcher:
         self.reformat_pomodoros()
         pomodoro.start_routine()
 
-    def tick(self, forcedtime=None):
-        time = current_time(forcedtime)
-        log(f"Dispatcher tick event {time}", level="debug")
+    def tick(self, time=None):
+
+        if type(time) == str:
+            time = time_from_hh_mm_string(time)
+
+        if not time:
+            time = current_time()
+
+        log(f"Dispatcher tick event {time}", level="info")
 
         if self.active_pomodoro:
-            active_minutes = int(time - self.active_pomodoro.startint)
-            if active_minutes >= config.POMODORO_DURATION:
+            active_time = time - self.active_pomodoro.start
+            if active_time >= self.active_pomodoro.duration:
                 if self.active_pomodoro.next:
-                    self.active_pomodoro.rest.start()
+                    self.active_pomodoro.rest.run()
 
         p = self.get_pomodoro(time)
         if p:
@@ -150,7 +167,7 @@ class Dispatcher:
             if p == last:
                 continue
             if p.text == last.text:
-                last.end, last.endint = p.end, p.endint
+                last.end = p.end
                 continue
             else:
                 last = p
@@ -174,7 +191,7 @@ class Dispatcher:
                     if not n.reformatted:
                         n.reformatted_text = f"{n.text}..."
                         n.reformatted = True
-                        p.reformatted_text = f"{p.text } until {n.end}"
+                        p.reformatted_text = f"{p.text } until {n.end_fmt}"
                         p.reformatted = True
                     continue
 
@@ -185,13 +202,14 @@ class Dispatcher:
         """used for print shedule to user on request"""
 
         s = []
-
-        if self.calendar_events.have_allday_events:
-            s.append(f"Schedule for {self.day.strftime(config.DATE_FORMAT_HUMAN)}:\n")
-            for e in self.calendar_events:
-                if e.all_day:
-                    s.append(e.text)
-            s.append("")  # for line break in output
+        
+        if self.calendar_events:
+            if self.calendar_events.have_allday_events:
+                s.append(f"Schedule for {self.day.strftime(config.DATE_FORMAT_HUMAN)}:\n")
+                for e in self.calendar_events:
+                    if e.all_day:
+                        s.append(e.text)
+                s.append("")  # for line break in output
 
         pool = self.pomodoros
         if united:
