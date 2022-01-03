@@ -12,7 +12,7 @@ def delete_notification_after_delay(notification):
 
 
 class Notification:
-    def __init__(self, message, deletelater=False) -> None:
+    def __init__(self, message) -> None:
         self.telegram_chat_id = config.TELEGRAM_USER
         self.bot = Bot(token=config.TELEGRAM_TOKEN)
         self.delete_delay = config.TELEGRAM_DELETE_NOTIFICATIONS  # Notification will be auto deleted in telegram after this period, seconds

@@ -1,7 +1,7 @@
 from typing import Union
 from datetime import datetime, timedelta
 
-from dateutil.relativedelta import relativedelta
+#from dateutil.relativedelta import relativedelta
 from google_calendar.calendar import GoogleCalendar
 from pomodoro import Pomodoro
 from pomodoro_calendar_event import PomodoroCalendarEvent
@@ -138,7 +138,7 @@ class Dispatcher:
         if not time:
             time = current_time()
 
-        log(f"Dispatcher tick event {time}", level="info")
+        log(f"Dispatcher tick event {time}", level="debug")
 
         if self.active_pomodoro:
             active_time = time - self.active_pomodoro.start

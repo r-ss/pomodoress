@@ -68,7 +68,7 @@ class Pomodoro:
         return self.end.strftime("%H:%M")
 
     def run(self) -> None:
-        log(f"> start routine {self.description}", level="info")
+        log(f"> start routine {self.description}", level="debug")
 
         # not send notification if we have long uuproductive activities in a row
         if any(w in self.text for w in config.UNPRODUCTIVE_ACTIVITIES) and any(z in self.previous.text for z in config.UNPRODUCTIVE_ACTIVITIES):
@@ -80,5 +80,5 @@ class Pomodoro:
         self.active = True
 
     def finish(self) -> None:
-        log(f"> end routine {self.description}", level="info")
+        log(f"> end routine {self.description}", level="debug")
         self.active = False

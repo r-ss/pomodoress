@@ -10,6 +10,10 @@
 say_hello:
 	@echo "Hello World"
 
+tree:
+	clear
+	tree -L 3 -I __pycache__
+
 clean:
 	@echo "Clean Up..."
 	find . -type f -iname ".DS_Store" -delete
