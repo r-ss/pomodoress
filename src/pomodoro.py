@@ -70,12 +70,15 @@ class Pomodoro:
     def run(self) -> None:
         log(f"> start routine {self.description}", level="debug")
 
-        # not send notification if we have long uuproductive activities in a row
-        if any(w in self.text for w in config.UNPRODUCTIVE_ACTIVITIES) and any(z in self.previous.text for z in config.UNPRODUCTIVE_ACTIVITIES):
+        # not send notification if we have long unproductive activities in a row
+        prevtext = ""
+        if self.previous:
+            prevtext = self.previous.text
+        if any(w in self.text for w in config.UNPRODUCTIVE_ACTIVITIES) and any(z in prevtext for z in config.UNPRODUCTIVE_ACTIVITIES):
             self.rest_started = True
             return
 
-        pomodoro_notification = Notification(f"{self.emoji} {self.start.strftime('%H:%M')} - {self.formtext}")
+        _ = Notification(f"{self.emoji} {self.start.strftime('%H:%M')} - {self.formtext}")
         self.notified = True
         self.active = True
 

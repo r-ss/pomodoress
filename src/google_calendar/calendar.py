@@ -47,25 +47,9 @@ class GoogleCalendar:
             service = build("calendar", "v3", credentials=self.creds)
 
             # Call the Calendar API
-            # now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-
-            # today = datetime.today()
             day_plus_1 = day + relativedelta(days=1)
-
-            # tmin = day.isoformat('T') + "Z"
-            # tmax = day_plus_1.isoformat('T') + "Z"
             tmin = day.isoformat("T")
             tmax = day_plus_1.isoformat("T")
-
-            # print('day', day)
-
-            # print('tmin', tmin)
-            # print('tmax', tmax)
-
-            # tmin = day.isoformat()+ "Z"
-            # tmax = day_plus_1.isoformat()+ "Z"
-
-            # one_day = round(time.time())+86400
             log("Getting the upcoming events", level="debug")
 
             events_result = (
@@ -86,8 +70,6 @@ class GoogleCalendar:
                 log("No upcoming events found.")
                 return
 
-            # Prints the start and name of the next 10 events
-
             cal_day_helper = CalendarDayHelper()
             for event in events:
                 start = event["start"].get("dateTime", event["start"].get("date"))
@@ -96,9 +78,6 @@ class GoogleCalendar:
 
                 c = CalendarEvent(start, end, text)
                 cal_day_helper.add_event(c)
-
-                # log(c.description)
-                # log(event)
 
             return cal_day_helper
 

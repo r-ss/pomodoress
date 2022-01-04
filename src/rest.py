@@ -41,7 +41,7 @@ class Rest:
         """fires when pomodoros' 25 minutes ends and rest time for 5 minutes starts"""
 
         log(f"rest.run() for {self.parent_pomodoro.description}", level="debug")
-        
+
         if self.active:
             return
 

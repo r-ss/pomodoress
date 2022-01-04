@@ -30,7 +30,7 @@ class PomodoroCalendarEvent(Pomodoro):
 
         self.text = text
 
-        self.fingerprint = f"calendar_fingerprint {self.start} - {self.end} - {self.text}"
+        self.fingerprint = f"calendar_fingerprint {self.start_fmt} - {self.end_fmt} - {self.text}"
 
         self.active = False
         self.reformatted = False
@@ -45,13 +45,14 @@ class PomodoroCalendarEvent(Pomodoro):
 
     @property
     def description(self) -> str:
-        return f"calendar event, {self.emoji} {self.start} - {self.end} - {self.formtext}"
+        # return f"calendar event, {self.emoji} {self.start} - {self.end} - {self.formtext}"
+        return f"cal {self.emoji} {self.start_fmt} - {self.end_fmt} - {self.formtext}"
 
     def start_routine(self) -> None:
 
         log(f"> start routine, calendar event {self.description}")
 
-        pomodoro_notification = Notification(f"{self.emoji} {self.start} - {self.formtext}")
+        _ = Notification(f"{self.emoji} {self.start} - {self.formtext}")
         self.notified = True
 
         self.active = True

@@ -1,7 +1,6 @@
 from typing import Union
 from datetime import datetime, timedelta
 
-#from dateutil.relativedelta import relativedelta
 from google_calendar.calendar import GoogleCalendar
 from pomodoro import Pomodoro
 from pomodoro_calendar_event import PomodoroCalendarEvent
@@ -9,12 +8,7 @@ from pomodoro_calendar_event import PomodoroCalendarEvent
 from config import config
 from log import log
 
-# import dateutil.parser
-# from dateutil.relativedelta import relativedelta
-
 from utils import time_from_hh_mm_string
-
-# from emoji import emojize
 
 from utils import current_time
 
@@ -31,8 +25,7 @@ class Dispatcher:
         else:
             self.load_schedule()
 
-        # self.previous_pomodoro = None
-        self.active_pomodoro = None
+        self.active_pomodoro: Union[Pomodoro, PomodoroCalendarEvent] = None
         self.reformatted = False
 
     def load_schedule(self) -> None:
@@ -62,10 +55,10 @@ class Dispatcher:
 
                     if e.start <= p.start and e.end >= p.end:
 
-                        log(f"e.start: {e.start}", level="debug")
-                        log(f"e.end: {e.end}", level="debug")
-                        log(f"p.start: {p.start}", level="debug")
-                        log(f"p.end: {p.end}", level="debug")
+                        # log(f"e.start: {e.start}", level="debug")
+                        # log(f"e.end: {e.end}", level="debug")
+                        # log(f"p.start: {p.start}", level="debug")
+                        # log(f"p.end: {p.end}", level="debug")
 
                         c = PomodoroCalendarEvent(e.start, e.end, e.text, is_commute_event=e.is_commute_event)
 
@@ -90,24 +83,11 @@ class Dispatcher:
         for line in raw_lines:
             self.pomodoros.append(Pomodoro(line))
 
-        # filling .previous value in every pomodoro
-        # for i in range(1, len(self.pomodoros)):
-        #     self.pomodoros[i].previous = self.pomodoros[i - 1]
-
-        # # filling .next value in every pomodoro
-        # for i in range(len(self.pomodoros) - 1):
-        #     self.pomodoros[i].next = self.pomodoros[i + 1]
-        # self.setup_prev_and_next()
-
     def get_pomodoro(self, time: Union[datetime, str]) -> Union[Pomodoro, None]:
 
         if type(time) == str:
             time = time_from_hh_mm_string(time)
 
-        # if time.tzinfo is None or time.tzinfo.utcoffset(d) is None:
-        #     time = config.TZ.localize(time)
-
-        # time = midnight_fix(time)
         for p in self.pomodoros:
             if p.start <= time and p.end > time:
                 return p

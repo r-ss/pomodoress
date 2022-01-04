@@ -15,7 +15,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.executors.pool import ProcessPoolExecutor
 
 from dispatcher import Dispatcher
-
+from log import log
 
 import sentry_sdk
 
@@ -46,11 +46,13 @@ updater = Updater(config.TELEGRAM_TOKEN)
 def start(update: Update, context: CallbackContext) -> None:
     config.PAUSED = False
     update.message.reply_text("started")
+    log(f"Command /start fired", level="info")
 
 
 def pause(update: Update, context: CallbackContext) -> None:
     config.PAUSED = True
     update.message.reply_text("paused")
+    log(f"Command /pause fired", level="info")
 
 
 def scheduler_tick_event():
@@ -60,27 +62,59 @@ def scheduler_tick_event():
 
 def reset_day_event():
     global dispatcher
-    dispatcher = None
+    del dispatcher
     dispatcher = Dispatcher()
     config.PAUSED = False
+    log(f"reset_day_event()", level="info")
+
+
+def reload_schedule(update: Update = None, context: CallbackContext = None):
+    global dispatcher
+
+    if update:
+        log(f"Command /reload fired", level="info")
+    else:
+        log(f"reload_schedule event", level="warning")
+
+    hotreplace = None
+    if dispatcher.active_pomodoro:
+        hotreplace = dispatcher.active_pomodoro
+
+    del dispatcher
+    dispatcher = Dispatcher()
+
+    if hotreplace:
+        current_pomodoro = dispatcher.current_pomodoro()
+        dispatcher.replace_pomodoro(current_pomodoro, hotreplace)
+
+        dispatcher.active_pomodoro = hotreplace
+        dispatcher.active_pomodoro.active = True
+        dispatcher.active_pomodoro.notified = True
+
+    if update:
+        update.message.reply_text("Schedule reloaded")
 
 
 def print_current_pomodoro(update: Update, context: CallbackContext):
+    log(f"print_current_pomodoro()", level="info")
     p = dispatcher.current_pomodoro()
     update.message.reply_text(p.description)
 
 
 def print_next_pomodoro(update: Update, context: CallbackContext):
+    log(f"print_next_pomodoro()", level="info")
     p = dispatcher.current_pomodoro()
     update.message.reply_text(p.next.description)
 
 
 def print_schedule(update: Update, context: CallbackContext):
+    log(f"print_schedule()", level="info")
     s = dispatcher.get_schedule(united=True)
     update.message.reply_text(s)
 
 
 def print_full_schedule(update: Update, context: CallbackContext):
+    log(f"print_full_schedule()", level="info")
     s = dispatcher.get_schedule(united=False)
     update.message.reply_text(s)
 
@@ -132,6 +166,7 @@ commands.add(TelegramCommand("current", print_current_pomodoro, aliases=["now"],
 commands.add(TelegramCommand("next", print_next_pomodoro, description="show next pomodoro"))
 commands.add(TelegramCommand("schedule", print_schedule, aliases=["day", "today"], description="show today's schedule"))
 commands.add(TelegramCommand("fullschedule", print_full_schedule, aliases=["fullday", "full"], description="show extended today's schedule"))
+commands.add(TelegramCommand("reload", reload_schedule, description="reload schedule and calendar"))
 
 
 def show_commands_list(update: Update, context: CallbackContext) -> None:
@@ -156,6 +191,7 @@ def main() -> None:
     # job = scheduler.add_job(scheduler_tick_event, 'interval', seconds=10)
     scheduler.add_job(scheduler_tick_event, "cron", minute="*", second=0)
     scheduler.add_job(reset_day_event, "cron", minute=15, hour=4)
+    scheduler.add_job(reload_schedule, "cron", hour="*", minute=0, second=0)
 
     scheduler.start()
 
