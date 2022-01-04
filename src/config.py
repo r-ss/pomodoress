@@ -34,7 +34,7 @@ class config:
 
     # logging setup, more in log.py
     LOG_FILE_PATH = f"{Path.cwd()}/logs/log.log"
-    LOG_LEVEL = "INFO"
+    LOG_LEVEL = "DEBUG"
 
     # notifications
     TELEGRAM_ENABLE_SENDING = True
