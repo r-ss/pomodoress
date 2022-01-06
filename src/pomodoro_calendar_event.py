@@ -18,6 +18,9 @@ from emoji import emojize
 
 
 class PomodoroCalendarEvent(Pomodoro):
+
+    type = 'calendar'
+
     def __init__(self, start, end, text, is_commute_event=False) -> None:
 
         self.start = start
@@ -37,22 +40,20 @@ class PomodoroCalendarEvent(Pomodoro):
         self.reformatted_text = self.text
         self.notified = False  # marks when notification sends to user
 
-        # Rest object is in response for 5-minutes resting time window when pomodoros 25 minutes passes
-        self.rest = None
-
         self.previous = None  # previous Pomodoro in queue
         self.next = None  # next Pomodoro in queue
 
     @property
     def description(self) -> str:
         # return f"calendar event, {self.emoji} {self.start} - {self.end} - {self.formtext}"
-        return f"cal {self.emoji} {self.start_fmt} - {self.end_fmt} - {self.formtext}"
+        return f"{self.emoji} {self.start_fmt} - {self.end_fmt} - {self.formtext} (calendar event)"
 
     def start_routine(self) -> None:
 
         log(f"> start routine, calendar event {self.description}")
 
-        _ = Notification(f"{self.emoji} {self.start} - {self.formtext}")
+        z = Notification(f"{self.emoji} {self.start} - {self.formtext}")
         self.notified = True
 
         self.active = True
+

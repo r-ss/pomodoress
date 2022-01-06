@@ -12,6 +12,9 @@ from utils import time_from_hh_mm_string
 
 
 class Pomodoro:
+
+    type = 'generic'
+
     def __init__(self, rawrow: str) -> None:
 
         if not rawrow or type(rawrow) != str:
@@ -78,10 +81,13 @@ class Pomodoro:
             self.rest_started = True
             return
 
-        _ = Notification(f"{self.emoji} {self.start.strftime('%H:%M')} - {self.formtext}")
+        z = Notification(f"{self.emoji} {self.start.strftime('%H:%M')} - {self.formtext}")
         self.notified = True
         self.active = True
 
     def finish(self) -> None:
         log(f"> end routine {self.description}", level="debug")
         self.active = False
+
+    def __repr__(self) -> str:
+        return f"{id(self)} - {self.description}"

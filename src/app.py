@@ -84,12 +84,12 @@ def reload_schedule(update: Update = None, context: CallbackContext = None):
     dispatcher = Dispatcher()
 
     if hotreplace:
-        current_pomodoro = dispatcher.current_pomodoro()
-        dispatcher.replace_pomodoro(current_pomodoro, hotreplace)
+        # current_pomodoro = dispatcher.current_pomodoro()
+        # dispatcher.replace_pomodoro(dispatcher.active_pomodoro, hotreplace)
 
         dispatcher.active_pomodoro = hotreplace
-        dispatcher.active_pomodoro.active = True
-        dispatcher.active_pomodoro.notified = True
+        # dispatcher.active_pomodoro.active = True
+        # dispatcher.active_pomodoro.notified = True
 
     if update:
         update.message.reply_text("Schedule reloaded")
@@ -117,6 +117,20 @@ def print_full_schedule(update: Update, context: CallbackContext):
     log(f"print_full_schedule()", level="info")
     s = dispatcher.get_schedule(united=False)
     update.message.reply_text(s)
+
+def debug_command(update: Update = None, context: CallbackContext = None):
+
+    log(f"debug_command()", level="debug")
+
+    for item in dispatcher.pomodoros:
+        log(item, level="debug")
+
+    update.message.reply_text("ok, look in the logs")
+
+
+
+
+
 
 
 class TelegramCommand:
@@ -167,6 +181,7 @@ commands.add(TelegramCommand("next", print_next_pomodoro, description="show next
 commands.add(TelegramCommand("schedule", print_schedule, aliases=["day", "today"], description="show today's schedule"))
 commands.add(TelegramCommand("fullschedule", print_full_schedule, aliases=["fullday", "full"], description="show extended today's schedule"))
 commands.add(TelegramCommand("reload", reload_schedule, description="reload schedule and calendar"))
+commands.add(TelegramCommand("debug", debug_command, description="debug action"))
 
 
 def show_commands_list(update: Update, context: CallbackContext) -> None:
@@ -191,7 +206,7 @@ def main() -> None:
     # job = scheduler.add_job(scheduler_tick_event, 'interval', seconds=10)
     scheduler.add_job(scheduler_tick_event, "cron", minute="*", second=0)
     scheduler.add_job(reset_day_event, "cron", minute=15, hour=4)
-    scheduler.add_job(reload_schedule, "cron", hour="*", minute=0, second=0)
+    scheduler.add_job(reload_schedule, "cron", hour="*", minute=40, second=0)
 
     scheduler.start()
 

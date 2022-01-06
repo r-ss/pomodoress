@@ -16,7 +16,7 @@ from utils import current_time
 class Dispatcher:
     def __init__(self, pomodoros=None) -> None:
 
-        self.day = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)  # + relativedelta(days=1)
+        self.day = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
         self.calendar = None
         self.calendar_events = None
 
@@ -45,6 +45,7 @@ class Dispatcher:
 
     def replace_pomodoro(self, a, b):
         self.pomodoros = [b if p.start == a.start else p for p in self.pomodoros]
+        self.setup_prev_and_next()
 
     def merge_calendar_with_schedule(self) -> None:
         if not self.calendar_events:
@@ -62,19 +63,16 @@ class Dispatcher:
 
                         c = PomodoroCalendarEvent(e.start, e.end, e.text, is_commute_event=e.is_commute_event)
 
-                        log(
-                            f"replacing pomodoro: {p.description} with {c.description}",
-                            level="debug",
-                        )
+                        log(f"replacing pomodoro: {p.description} with {c.description}", level="debug")
 
                         self.replace_pomodoro(p, c)
 
     def setup_prev_and_next(self) -> None:
-        # filling .previous value in every pomodoro
+        """ filling .previous value in every pomodoro """
         for i in range(1, len(self.pomodoros)):
             self.pomodoros[i].previous = self.pomodoros[i - 1]
 
-        # filling .next value in every pomodoro
+        """ filling .next value in every pomodoro """
         for i in range(len(self.pomodoros) - 1):
             self.pomodoros[i].next = self.pomodoros[i + 1]
 
@@ -120,23 +118,28 @@ class Dispatcher:
 
         log(f"Dispatcher tick event {time}", level="debug")
 
-        if self.active_pomodoro:
+        if self.active_pomodoro:            
             active_time = time - self.active_pomodoro.start
+            log(f"tick active_pomodoro: {self.active_pomodoro}, active_time: {active_time}", level="debug")
             if active_time >= timedelta(minutes=25):
                 if self.active_pomodoro.next:
-                    self.active_pomodoro.rest.run()
+                    if self.active_pomodoro.type == 'generic':
+                        self.active_pomodoro.rest.run()
+
 
         p = self.get_pomodoro(time)
-        if p:
+        if p != self.active_pomodoro:
             self.check_and_fire(p)
+        log("Nothing more in tick_event()", level="debug")
 
     def check_and_fire(self, pomodoro: Union[Pomodoro, PomodoroCalendarEvent]) -> None:
+        log(f"> check_and_fire for {pomodoro}", level="debug")
         if not pomodoro.active:
             self.run_pomodoro(pomodoro)
 
     @property
     def united_pomodoros(self):
-        """skipped repeated pomodoros of same type"""
+        """ skip repeated pomodoros of same type """
         united = [self.pomodoros[0]]
         last = self.pomodoros[0]
         for i, p in enumerate(self.pomodoros):
@@ -175,7 +178,7 @@ class Dispatcher:
         self.reformatted = True
 
     def get_schedule(self, united=True):
-        """used for print shedule to user on request"""
+        """ used for print shedule to user on request """
 
         s = []
 
