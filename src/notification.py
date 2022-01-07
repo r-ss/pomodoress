@@ -20,7 +20,6 @@ class Notification:
 
         self.telegram_message_id = None
         self.thread = None
-        log("__init__ Notification", level="debug")
 
         self.send()
         # return self

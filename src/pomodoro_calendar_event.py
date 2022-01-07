@@ -52,7 +52,7 @@ class PomodoroCalendarEvent(Pomodoro):
 
         log(f"> start routine, calendar event {self.description}")
 
-        z = Notification(f"{self.emoji} {self.start} - {self.formtext}")
+        _ = Notification(f"{self.emoji} {self.start} - {self.formtext}")
         self.notified = True
 
         self.active = True

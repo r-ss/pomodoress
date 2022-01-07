@@ -69,30 +69,13 @@ def reset_day_event():
 
 
 def reload_schedule(update: Update = None, context: CallbackContext = None):
-    global dispatcher
-
     if update:
         log(f"Command /reload fired", level="info")
     else:
         log(f"reload_schedule event", level="warning")
+    dispatcher.reload_schedule()
 
-    hotreplace = None
-    if dispatcher.active_pomodoro:
-        hotreplace = dispatcher.active_pomodoro
 
-    del dispatcher
-    dispatcher = Dispatcher()
-
-    if hotreplace:
-        # current_pomodoro = dispatcher.current_pomodoro()
-        # dispatcher.replace_pomodoro(dispatcher.active_pomodoro, hotreplace)
-
-        dispatcher.active_pomodoro = hotreplace
-        # dispatcher.active_pomodoro.active = True
-        # dispatcher.active_pomodoro.notified = True
-
-    if update:
-        update.message.reply_text("Schedule reloaded")
 
 
 def print_current_pomodoro(update: Update, context: CallbackContext):

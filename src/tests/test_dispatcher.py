@@ -51,9 +51,9 @@ def test_tick():
 def test_many_ticks():
     ds = Dispatcher()
 
-    start = config.TZ.localize(dateutil.parser.parse("12:00"))
-    end = config.TZ.localize(dateutil.parser.parse("18:00"))
-    step = relativedelta(minutes=3)
+    start = config.TZ.localize(dateutil.parser.parse("14:00"))
+    end = config.TZ.localize(dateutil.parser.parse("15:50"))
+    step = relativedelta(minutes=1)
 
     now = start
     while now < end:

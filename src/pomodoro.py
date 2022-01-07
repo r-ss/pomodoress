@@ -81,7 +81,7 @@ class Pomodoro:
             self.rest_started = True
             return
 
-        z = Notification(f"{self.emoji} {self.start.strftime('%H:%M')} - {self.formtext}")
+        _ = Notification(f"{self.emoji} {self.start.strftime('%H:%M')} - {self.formtext}")
         self.notified = True
         self.active = True
 

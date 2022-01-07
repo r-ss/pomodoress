@@ -43,6 +43,24 @@ class Dispatcher:
         else:
             self.calendar_events = self.calendar.load_for_day(self.day)
 
+    def reload_schedule(self):
+        log(f"Reloading schedule...", level="debug")
+
+        hotreplace = None
+        if self.active_pomodoro:
+            hotreplace = self.active_pomodoro
+
+        self.pomodoros = []
+        self.load_schedule()
+
+        if hotreplace:
+            # self.active_pomodoro = hotreplace
+            
+            self.replace_pomodoro(self.active_pomodoro, hotreplace)
+            self.active_pomodoro.active = True
+            self.active_pomodoro.notified = True
+
+
     def replace_pomodoro(self, a, b):
         self.pomodoros = [b if p.start == a.start else p for p in self.pomodoros]
         self.setup_prev_and_next()
@@ -116,6 +134,10 @@ class Dispatcher:
         if not time:
             time = current_time()
 
+        # if time.minute == 40:
+        #     log(f"Schedule will be reloaded now, {time}", level="debug")
+        #     self.reload_schedule()
+        
         log(f"Dispatcher tick event {time}", level="debug")
 
         if self.active_pomodoro:            
@@ -130,7 +152,7 @@ class Dispatcher:
         p = self.get_pomodoro(time)
         if p != self.active_pomodoro:
             self.check_and_fire(p)
-        log("Nothing more in tick_event()", level="debug")
+        # log("Nothing more in tick_event()", level="debug")
 
     def check_and_fire(self, pomodoro: Union[Pomodoro, PomodoroCalendarEvent]) -> None:
         log(f"> check_and_fire for {pomodoro}", level="debug")

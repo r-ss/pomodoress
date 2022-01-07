@@ -3,6 +3,8 @@ import os.path
 from dateutil.relativedelta import relativedelta
 from config import config
 
+from datetime import datetime
+
 from google_calendar.calendar_event import CalendarEvent, CalendarDayHelper
 
 from log import log
@@ -87,17 +89,22 @@ class GoogleCalendar:
     def load_fake(self):
         log("loading fake calendar events")
 
+        today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
+        tomorrow = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ) + relativedelta(days=1)
+        today = today.strftime("%Y-%m-%d")
+        tomorrow = tomorrow.strftime("%Y-%m-%d")
+
         cal_day_helper = CalendarDayHelper()
 
-        cal_day_helper.add_event(CalendarEvent("2021-12-26", "2021-12-27", "All day some-event"))
-        cal_day_helper.add_event(CalendarEvent("2021-12-26", "2021-12-27", "Another delivery"))
+        cal_day_helper.add_event(CalendarEvent(today, tomorrow, "All day some-event"))
+        cal_day_helper.add_event(CalendarEvent(today, tomorrow, "Another delivery"))
         cal_day_helper.add_event(
             CalendarEvent(
-                "2021-12-26T15:00:00+03:00",
-                "2021-12-26T16:00:00+03:00",
+                f"{today}T15:00:00+03:00",
+                f"{today}T16:00:00+03:00",
                 "Тестовое календарное событие commute 2:00, back 2",
             )
         )
-        cal_day_helper.add_event(CalendarEvent("2021-12-26T19:00:00+03:00", "2021-12-26T22:00:00+03:00", "Formula-1"))
+        cal_day_helper.add_event(CalendarEvent(f"{today}T19:00:00+03:00", f"{today}T22:00:00+03:00", "Formula-1"))
 
         return cal_day_helper
