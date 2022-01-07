@@ -105,6 +105,6 @@ class GoogleCalendar:
                 "Тестовое календарное событие commute 2:00, back 2",
             )
         )
-        cal_day_helper.add_event(CalendarEvent(f"{today}T19:00:00+03:00", f"{today}T22:00:00+03:00", "Formula-1"))
+        # cal_day_helper.add_event(CalendarEvent(f"{today}T19:00:00+03:00", f"{today}T22:00:00+03:00", "Formula-1"))
 
         return cal_day_helper

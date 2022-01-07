@@ -6,6 +6,7 @@ from config import config
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
 
+from log import log
 
 def test_parsing():
     ds = Dispatcher()
@@ -51,13 +52,30 @@ def test_tick():
 def test_many_ticks():
     ds = Dispatcher()
 
-    start = config.TZ.localize(dateutil.parser.parse("14:00"))
-    end = config.TZ.localize(dateutil.parser.parse("15:50"))
+    start = config.TZ.localize(dateutil.parser.parse("16:00"))
+    end = config.TZ.localize(dateutil.parser.parse("21:00"))
     step = relativedelta(minutes=1)
 
     now = start
     while now < end:
         now += step
+       
+        if now.minute == 40:
+            # log(now.minute)
+            ds.get_schedule(united=True)
+
+        if now.minute == 42:
+            # log(now.minute)
+            ds.reload_schedule()
+
+        if now.minute == 44:
+            # log(now.minute)
+            ds.get_schedule(united=False)
+
+        if now.minute == 44:
+            # log(now.minute)
+            ds.get_schedule(united=True)
+
         ds.tick(now)
 
 

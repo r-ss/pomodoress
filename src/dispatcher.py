@@ -19,6 +19,7 @@ class Dispatcher:
         self.day = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
         self.calendar = None
         self.calendar_events = None
+        self.reformatted = False
 
         if pomodoros:
             self.pomodoros = pomodoros
@@ -26,7 +27,8 @@ class Dispatcher:
             self.load_schedule()
 
         self.active_pomodoro: Union[Pomodoro, PomodoroCalendarEvent] = None
-        self.reformatted = False
+        
+
 
     def load_schedule(self) -> None:
         with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
@@ -35,6 +37,8 @@ class Dispatcher:
         self.load_calendar()
         self.merge_calendar_with_schedule()
         self.setup_prev_and_next()
+        self.reformatted = False
+        self.reformat_pomodoros()
 
     def load_calendar(self) -> None:
         self.calendar = GoogleCalendar()
@@ -123,7 +127,7 @@ class Dispatcher:
             self.active_pomodoro.finish()
 
         self.active_pomodoro = pomodoro
-        self.reformat_pomodoros()
+        
         pomodoro.run()
 
     def tick(self, time=None):
@@ -138,7 +142,7 @@ class Dispatcher:
         #     log(f"Schedule will be reloaded now, {time}", level="debug")
         #     self.reload_schedule()
         
-        log(f"Dispatcher tick event {time}", level="debug")
+        # log(f"Dispatcher tick event {time}", level="debug")
 
         if self.active_pomodoro:            
             active_time = time - self.active_pomodoro.start
@@ -168,7 +172,7 @@ class Dispatcher:
             if p == last:
                 continue
             if p.text == last.text:
-                last.end = p.end
+                # last.end = p.end
                 continue
             else:
                 last = p

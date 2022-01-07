@@ -40,10 +40,12 @@ class Rest:
     def run(self) -> None:
         """fires when pomodoros' 25 minutes ends and rest time for 5 minutes starts"""
 
-        log(f"rest.run() for {self.parent_pomodoro.description}", level="debug")
+        
 
         if self.active:
             return
+
+        log(f"rest.run() for {self.parent_pomodoro.description}", level="debug")
 
         if any(w in self.parent_pomodoro.text for w in config.UNPRODUCTIVE_ACTIVITIES):
             self.active = True
@@ -60,7 +62,7 @@ class Rest:
 
         # send_telegram_message(f'{self.random_message()}{self.next_announce}')
         self.active = True
-        rest_notification = Notification(f"{self.random_message()}{self.next_announce}")
+        _ = Notification(f"{self.random_message()}{self.next_announce}")
 
         # SSMParameter.save(f'rest for {self.parent_pomodoro.fingerprint}')
 
