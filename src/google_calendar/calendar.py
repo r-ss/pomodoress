@@ -1,13 +1,12 @@
 # from datetime import datetime
 import os.path
-from dateutil.relativedelta import relativedelta
-from config import config
-
 from datetime import datetime
 
-from google_calendar.calendar_event import CalendarEvent, CalendarDayHelper
-
+from config import config
+from dateutil.relativedelta import relativedelta
 from log import log
+
+from google_calendar.calendar_event import CalendarDayHelper, CalendarEvent
 
 """ pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib """
 

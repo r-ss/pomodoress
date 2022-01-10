@@ -1,25 +1,24 @@
-import re
+# import re
+
+from emoji import emojize
 
 # from misc import midnight_fix
-from config import config
-
-from notification import Notification
+# from config import config
 from log import log
+from notification import Notification
+from pomodoro import Pomodoro
 
 # from misc import midnight_fix
 
 # import dateutil.parser
 
-from pomodoro import Pomodoro
 
 # from dateutil.relativedelta import relativedelta
-
-from emoji import emojize
 
 
 class PomodoroCalendarEvent(Pomodoro):
 
-    type = 'calendar'
+    type = "calendar"
 
     def __init__(self, start, end, text, is_commute_event=False) -> None:
 
@@ -56,4 +55,3 @@ class PomodoroCalendarEvent(Pomodoro):
         self.notified = True
 
         self.active = True
-

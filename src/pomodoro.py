@@ -1,19 +1,16 @@
 import re
 
-from rest import Rest
-
 # from misc import midnight_fix
 from config import config
-
-from notification import Notification
 from log import log
-
+from notification import Notification
+from rest import Rest
 from utils import time_from_hh_mm_string
 
 
 class Pomodoro:
 
-    type = 'generic'
+    type = "generic"
 
     def __init__(self, rawrow: str) -> None:
 

@@ -1,12 +1,10 @@
-import pytest
-from dispatcher import Dispatcher
-
-from config import config
-
 import dateutil.parser
+import pytest
+from config import config
 from dateutil.relativedelta import relativedelta
-
+from dispatcher import Dispatcher
 from log import log
+
 
 def test_parsing():
     ds = Dispatcher()
@@ -59,7 +57,7 @@ def test_many_ticks():
     now = start
     while now < end:
         now += step
-       
+
         if now.minute == 40:
             # log(now.minute)
             ds.get_schedule(united=True)

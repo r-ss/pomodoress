@@ -9,6 +9,10 @@ token.json
 
 env/
 
+
+.vscode
+
+
 # snippets
 commands.txt
 

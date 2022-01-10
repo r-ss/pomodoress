@@ -1,7 +1,8 @@
-from telegram import Bot
-from config import config
 from threading import Timer
 
+from telegram import Bot
+
+from config import config
 from log import log
 
 

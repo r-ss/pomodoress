@@ -1,16 +1,12 @@
-from typing import Union
 from datetime import datetime, timedelta
-
-from google_calendar.calendar import GoogleCalendar
-from pomodoro import Pomodoro
-from pomodoro_calendar_event import PomodoroCalendarEvent
+from typing import Union
 
 from config import config
+from google_calendar.calendar import GoogleCalendar
 from log import log
-
-from utils import time_from_hh_mm_string
-
-from utils import current_time
+from pomodoro import Pomodoro
+from pomodoro_calendar_event import PomodoroCalendarEvent
+from utils import current_time, time_from_hh_mm_string
 
 
 class Dispatcher:
@@ -27,8 +23,6 @@ class Dispatcher:
             self.load_schedule()
 
         self.active_pomodoro: Union[Pomodoro, PomodoroCalendarEvent] = None
-        
-
 
     def load_schedule(self) -> None:
         with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
@@ -59,11 +53,10 @@ class Dispatcher:
 
         if hotreplace:
             # self.active_pomodoro = hotreplace
-            
+
             self.replace_pomodoro(self.active_pomodoro, hotreplace)
             self.active_pomodoro.active = True
             self.active_pomodoro.notified = True
-
 
     def replace_pomodoro(self, a, b):
         self.pomodoros = [b if p.start == a.start else p for p in self.pomodoros]
@@ -85,12 +78,15 @@ class Dispatcher:
 
                         c = PomodoroCalendarEvent(e.start, e.end, e.text, is_commute_event=e.is_commute_event)
 
-                        log(f"replacing pomodoro: {p.description} with {c.description}", level="debug")
+                        log(
+                            f"replacing pomodoro: {p.description} with {c.description}",
+                            level="debug",
+                        )
 
                         self.replace_pomodoro(p, c)
 
     def setup_prev_and_next(self) -> None:
-        """ filling .previous value in every pomodoro """
+        """filling .previous value in every pomodoro"""
         for i in range(1, len(self.pomodoros)):
             self.pomodoros[i].previous = self.pomodoros[i - 1]
 
@@ -127,7 +123,7 @@ class Dispatcher:
             self.active_pomodoro.finish()
 
         self.active_pomodoro = pomodoro
-        
+
         pomodoro.run()
 
     def tick(self, time=None):
@@ -141,17 +137,19 @@ class Dispatcher:
         # if time.minute == 40:
         #     log(f"Schedule will be reloaded now, {time}", level="debug")
         #     self.reload_schedule()
-        
+
         # log(f"Dispatcher tick event {time}", level="debug")
 
-        if self.active_pomodoro:            
+        if self.active_pomodoro:
             active_time = time - self.active_pomodoro.start
-            log(f"tick active_pomodoro: {self.active_pomodoro}, active_time: {active_time}", level="debug")
+            log(
+                f"tick active_pomodoro: {self.active_pomodoro}, active_time: {active_time}",
+                level="debug",
+            )
             if active_time >= timedelta(minutes=25):
                 if self.active_pomodoro.next:
-                    if self.active_pomodoro.type == 'generic':
+                    if self.active_pomodoro.type == "generic":
                         self.active_pomodoro.rest.run()
-
 
         p = self.get_pomodoro(time)
         if p != self.active_pomodoro:
@@ -165,7 +163,7 @@ class Dispatcher:
 
     @property
     def united_pomodoros(self):
-        """ skip repeated pomodoros of same type """
+        """skip repeated pomodoros of same type"""
         united = [self.pomodoros[0]]
         last = self.pomodoros[0]
         for i, p in enumerate(self.pomodoros):
@@ -204,7 +202,7 @@ class Dispatcher:
         self.reformatted = True
 
     def get_schedule(self, united=True):
-        """ used for print shedule to user on request """
+        """used for print shedule to user on request"""
 
         s = []
 

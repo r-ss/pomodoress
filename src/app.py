@@ -1,21 +1,15 @@
-# pylint: disable=C0116,W0613
-
 # from datetime import datetime
 
-from log import log
-from config import config
-
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, CallbackContext
-
-from apscheduler.schedulers.background import BackgroundScheduler
-
-# from apscheduler.schedulers.blocking import BlockingScheduler
-
 from apscheduler.executors.pool import ProcessPoolExecutor
+from apscheduler.schedulers.background import BackgroundScheduler
+from telegram import Update
+from telegram.ext import CallbackContext, CommandHandler, Updater
 
+from config import config
 from dispatcher import Dispatcher
 from log import log
+
+# from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 executors = {
@@ -36,13 +30,13 @@ updater = Updater(config.TELEGRAM_TOKEN)
 def start(update: Update, context: CallbackContext) -> None:
     config.PAUSED = False
     update.message.reply_text("started")
-    log(f"Command /start fired", level="info")
+    log("Command /start fired", level="info")
 
 
 def pause(update: Update, context: CallbackContext) -> None:
     config.PAUSED = True
     update.message.reply_text("paused")
-    log(f"Command /pause fired", level="info")
+    log("Command /pause fired", level="info")
 
 
 def scheduler_tick_event():
@@ -55,55 +49,49 @@ def reset_day_event():
     del dispatcher
     dispatcher = Dispatcher()
     config.PAUSED = False
-    log(f"reset_day_event()", level="info")
+    log("reset_day_event()", level="info")
 
 
 def reload_schedule(update: Update = None, context: CallbackContext = None):
     if update:
-        log(f"Command /reload fired", level="info")
+        log("Command /reload fired", level="info")
     else:
-        log(f"reload_schedule event", level="warning")
+        log("reload_schedule event", level="warning")
     dispatcher.reload_schedule()
 
 
-
-
 def print_current_pomodoro(update: Update, context: CallbackContext):
-    log(f"print_current_pomodoro()", level="info")
+    log("print_current_pomodoro()", level="info")
     p = dispatcher.current_pomodoro()
     update.message.reply_text(p.description)
 
 
 def print_next_pomodoro(update: Update, context: CallbackContext):
-    log(f"print_next_pomodoro()", level="info")
+    log("print_next_pomodoro()", level="info")
     p = dispatcher.current_pomodoro()
     update.message.reply_text(p.next.description)
 
 
 def print_schedule(update: Update, context: CallbackContext):
-    log(f"print_schedule()", level="info")
+    log("print_schedule()", level="info")
     s = dispatcher.get_schedule(united=True)
     update.message.reply_text(s)
 
 
 def print_full_schedule(update: Update, context: CallbackContext):
-    log(f"print_full_schedule()", level="info")
+    log("print_full_schedule()", level="info")
     s = dispatcher.get_schedule(united=False)
     update.message.reply_text(s)
 
+
 def debug_command(update: Update = None, context: CallbackContext = None):
 
-    log(f"debug_command()", level="debug")
+    log("debug_command()", level="debug")
 
     for item in dispatcher.pomodoros:
         log(item, level="debug")
 
     update.message.reply_text("ok, look in the logs")
-
-
-
-
-
 
 
 class TelegramCommand:
@@ -149,10 +137,31 @@ commands = TelegramCommandsBin()
 
 commands.add(TelegramCommand("start", start, description="start or resume paused bot"))
 commands.add(TelegramCommand("pause", pause, description="pause bot until tomorrow"))
-commands.add(TelegramCommand("current", print_current_pomodoro, aliases=["now"], description="show current pomodoro"))
+commands.add(
+    TelegramCommand(
+        "current",
+        print_current_pomodoro,
+        aliases=["now"],
+        description="show current pomodoro",
+    )
+)
 commands.add(TelegramCommand("next", print_next_pomodoro, description="show next pomodoro"))
-commands.add(TelegramCommand("schedule", print_schedule, aliases=["day", "today"], description="show today's schedule"))
-commands.add(TelegramCommand("fullschedule", print_full_schedule, aliases=["fullday", "full"], description="show extended today's schedule"))
+commands.add(
+    TelegramCommand(
+        "schedule",
+        print_schedule,
+        aliases=["day", "today"],
+        description="show today's schedule",
+    )
+)
+commands.add(
+    TelegramCommand(
+        "fullschedule",
+        print_full_schedule,
+        aliases=["fullday", "full"],
+        description="show extended today's schedule",
+    )
+)
 commands.add(TelegramCommand("reload", reload_schedule, description="reload schedule and calendar"))
 commands.add(TelegramCommand("debug", debug_command, description="debug action"))
 

@@ -1,10 +1,10 @@
-from datetime import datetime
-import dateutil.parser
-from dateutil.relativedelta import relativedelta
-from config import config
-
 import re
 import time
+from datetime import datetime
+
+import dateutil.parser
+from config import config
+from dateutil.relativedelta import relativedelta
 
 
 class CalendarEvent:

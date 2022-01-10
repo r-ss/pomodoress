@@ -2,9 +2,8 @@ import random
 import re
 
 from config import config
-
-from notification import Notification
 from log import log
+from notification import Notification
 
 
 class Rest:
@@ -39,8 +38,6 @@ class Rest:
 
     def run(self) -> None:
         """fires when pomodoros' 25 minutes ends and rest time for 5 minutes starts"""
-
-        
 
         if self.active:
             return

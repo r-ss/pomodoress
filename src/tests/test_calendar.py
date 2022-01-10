@@ -1,10 +1,9 @@
 from datetime import datetime
-from google_calendar.calendar import GoogleCalendar
-from dispatcher import Dispatcher
 
 from config import config
-
+from dispatcher import Dispatcher
 from emoji import emojize
+from google_calendar.calendar import GoogleCalendar
 
 
 def test_today():

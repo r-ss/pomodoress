@@ -12,6 +12,7 @@ def bytes_to_human_readable_size(num, suffix="b"):
     return f"{num:.1f}Yi{suffix}"
 
 
+"""
 # Singleton - https://stackoverflow.com/questions/42237752/single-instance-of-class-in-python
 def singleton(cls, *args, **kw):
     instances = {}
@@ -22,6 +23,7 @@ def singleton(cls, *args, **kw):
         return instances[cls]
 
     return _singleton
+"""
 
 
 def time_from_hh_mm_string(hh_mm: str) -> datetime:
