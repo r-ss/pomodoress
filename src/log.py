@@ -5,7 +5,7 @@ from loguru import logger
 from config import config
 
 logger.remove(0)
-logger.add(sys.stderr, level="DEBUG", format="<green>{time:YYYY-MM-DD at HH:mm:ss}</green> | <level>{message}</level>", colorize=True)
+logger.add(sys.stderr, level="INFO", format="<green>{time:YYYY-MM-DD at HH:mm:ss}</green> | <level>{message}</level>", colorize=True)
 logger.add(
     config.LOG_FILE_PATH,
     level=config.LOG_LEVEL,

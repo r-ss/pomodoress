@@ -47,6 +47,16 @@ class PomodoroCalendarEvent(Pomodoro):
         # return f"calendar event, {self.emoji} {self.start} - {self.end} - {self.formtext}"
         return f"{self.emoji} {self.start_fmt} - {self.end_fmt} - {self.formtext} (calendar event)"
 
+    @property
+    def description(self) -> str:
+        """10:00 - 10:30 - code (calendar event)"""
+        return f"{self.emoji} {self.start_fmt} - {self.end_fmt} - {self.formtext} (calendar event)"
+
+    @property
+    def readable_description(self) -> str:
+        """13:00 - Commute until 15:00 (calendar event)"""
+        return f"{self.emoji} {self.start_fmt} - {self.formtext} (calendar event)"
+
     def start_routine(self) -> None:
 
         log(f"> start routine, calendar event {self.description}")

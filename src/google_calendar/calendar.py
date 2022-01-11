@@ -86,7 +86,7 @@ class GoogleCalendar:
             log("An error in GoogleCalendar occurred: %s" % error)
 
     def load_fake(self):
-        log("loading fake calendar events")
+        log("loading fake calendar events", level="debug")
 
         today = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ)
         tomorrow = datetime.now(config.TZ).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(config.TZ) + relativedelta(days=1)

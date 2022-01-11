@@ -43,10 +43,17 @@ class Pomodoro:
 
     @property
     def description(self) -> str:
-        return f"{self.emoji} {self.start_fmt} - {self.end_fmt} - {self.formtext}"
+        """10:00 - 10:30 - code"""
+        return f"{self.emoji} {self.start_fmt} - {self.end_fmt} - {self.text}"
+
+    @property
+    def readable_description(self) -> str:
+        """10:00 - code until 12:00"""
+        return f"{self.emoji} {self.start_fmt} - {self.formtext}"
 
     @property
     def extended_description(self) -> str:
+        """2022-01-11 10:00:00+03:00 - 2022-01-11 10:30:00+03:00 - duration 0:30:00 - code"""
         return f"{self.emoji} {self.start} - {self.end} - duration {self.duration} - {self.text}"
 
     @property

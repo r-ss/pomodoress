@@ -83,12 +83,18 @@ def test_print_schedule():
     cp = ds.current_pomodoro()
     ds.run_pomodoro(cp)
 
+    txt = "test_print_schedule:"
     for p in ds.pomodoros:
         caret = "   "
         if p.active:
             caret = ">> "
-        line = f"{caret}{p.description}"
-        print(line)
+        line = f"\n{caret}{p.description}"
+        txt += line
+
+    log(txt)
+    assert ("10:00 - 10:30 - code" in txt) is True
+    assert ("16:00 - 17:00 - Return... (calendar event)" in txt) is True
+    assert ("00:30 - 01:00 - wind down" in txt) is True
 
 
 def test_print_united_pomodoros():
@@ -97,12 +103,18 @@ def test_print_united_pomodoros():
     cp = ds.current_pomodoro()
     ds.run_pomodoro(cp)
 
+    txt = "test_print_united_pomodoros:"
     for p in ds.united_pomodoros:
         caret = "   "
         if p.active:
             caret = ">> "
-        line = f"{caret}{p.description}"
-        print(line)
+        line = f"\n{caret}{p.readable_description}"
+        txt += line
+
+    log(txt)
+    assert ("10:00 - code until 12:00" in txt) is True
+    assert ("13:00 - Commute until 15:00 (calendar event)" in txt) is True
+    assert ("00:30 - wind down" in txt) is True
 
 
 """
