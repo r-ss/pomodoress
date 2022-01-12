@@ -44,7 +44,7 @@ class Pomodoro:
     @property
     def description(self) -> str:
         """10:00 - 10:30 - code"""
-        return f"{self.emoji} {self.start_fmt} - {self.end_fmt} - {self.text}"
+        return f"{self.emoji} {self.start_fmt} - {self.end_fmt} - {self.formtext}"
 
     @property
     def readable_description(self) -> str:

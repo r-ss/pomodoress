@@ -137,31 +137,10 @@ commands = TelegramCommandsBin()
 
 commands.add(TelegramCommand("start", start, description="start or resume paused bot"))
 commands.add(TelegramCommand("pause", pause, description="pause bot until tomorrow"))
-commands.add(
-    TelegramCommand(
-        "current",
-        print_current_pomodoro,
-        aliases=["now"],
-        description="show current pomodoro",
-    )
-)
+commands.add(TelegramCommand("current", print_current_pomodoro, aliases=["now"], description="show current pomodoro"))
 commands.add(TelegramCommand("next", print_next_pomodoro, description="show next pomodoro"))
-commands.add(
-    TelegramCommand(
-        "schedule",
-        print_schedule,
-        aliases=["day", "today"],
-        description="show today's schedule",
-    )
-)
-commands.add(
-    TelegramCommand(
-        "fullschedule",
-        print_full_schedule,
-        aliases=["fullday", "full"],
-        description="show extended today's schedule",
-    )
-)
+commands.add(TelegramCommand("schedule", print_schedule, aliases=["day", "today"], description="show today's schedule"))
+commands.add(TelegramCommand("fullschedule", print_full_schedule, aliases=["fullday", "full"], description="show extended today's schedule"))
 commands.add(TelegramCommand("reload", reload_schedule, description="reload schedule and calendar"))
 commands.add(TelegramCommand("debug", debug_command, description="debug action"))
 

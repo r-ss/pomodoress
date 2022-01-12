@@ -52,7 +52,7 @@ class config:
 
     # Default Pomodoro and Rest duration, in minutes
     POMODORO_DURATION = 25
-    REST_DURATION = 5
+    # REST_DURATION = 5
 
     # formats
     DATE_FORMAT_HUMAN: str = "%d.%m.%Y"

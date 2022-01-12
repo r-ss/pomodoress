@@ -11,11 +11,14 @@ class Rest:
     active = False
 
     def __init__(self, parent_pomodoro) -> None:
+
+        # self.rest_messages = self.load_rest_messages()
         self.rest_messages = self.load_rest_messages()
+
         self.parent_pomodoro = parent_pomodoro
-        self.duration = config.REST_DURATION  # default rest duration 5 minutes
 
     def load_rest_messages(self) -> None:
+        log("load_rest_messages")
         messages = []
         with open(config.REST_MESSAGES_FILE_PATH, "r", encoding="UTF8") as f:
             lines = f.readlines()
@@ -31,9 +34,7 @@ class Rest:
         if self.parent_pomodoro.next:
             if self.parent_pomodoro.next.text == self.parent_pomodoro.text:
                 return ""
-
-            line = f" next: {self.parent_pomodoro.next.text}"
-            return line
+            return f" next: {self.parent_pomodoro.next.text}"
         return ""
 
     def run(self) -> None:
@@ -53,14 +54,5 @@ class Rest:
             self.active = True
             return
 
-        # if SSMParameter.get() == f'rest for {self.parent_pomodoro.fingerprint}':
-        #     CWLog.send_cw_log(f'Rest skip because ssmparameter says it already fired: { self.parent_pomodoro.text }')
-        #     return
-
-        # send_telegram_message(f'{self.random_message()}{self.next_announce}')
         self.active = True
         _ = Notification(f"{self.random_message()}{self.next_announce}")
-
-        # SSMParameter.save(f'rest for {self.parent_pomodoro.fingerprint}')
-
-        # CWLog.send_cw_log(f'Rest has been started for: { self.parent_pomodoro.text }')

@@ -1,7 +1,9 @@
-from config import config
 from datetime import datetime
+
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
+
+from config import config
 
 
 def bytes_to_human_readable_size(num, suffix="b"):
@@ -33,5 +35,5 @@ def time_from_hh_mm_string(hh_mm: str) -> datetime:
     return time
 
 
-def current_time(forcedtime=None):
+def current_time():
     return datetime.now(config.TZ)

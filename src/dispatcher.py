@@ -78,10 +78,7 @@ class Dispatcher:
 
                         c = PomodoroCalendarEvent(e.start, e.end, e.text, is_commute_event=e.is_commute_event)
 
-                        log(
-                            f"replacing pomodoro: {p.description} with {c.description}",
-                            level="debug",
-                        )
+                        log(f"replacing pomodoro: {p.description} with {c.description}", level="debug")
 
                         self.replace_pomodoro(p, c)
 
@@ -142,10 +139,7 @@ class Dispatcher:
 
         if self.active_pomodoro:
             active_time = time - self.active_pomodoro.start
-            log(
-                f"tick active_pomodoro: {self.active_pomodoro}, active_time: {active_time}",
-                level="debug",
-            )
+            log(f"tick active_pomodoro: {self.active_pomodoro}, active_time: {active_time}", level="debug")
             if active_time >= timedelta(minutes=25):
                 if self.active_pomodoro.next:
                     if self.active_pomodoro.type == "generic":
@@ -219,5 +213,8 @@ class Dispatcher:
             pool = self.united_pomodoros
 
         for p in pool:
-            s.append(p.description)
+            if united:
+                s.append(p.readable_description)
+            else:
+                s.append(p.description)
         return "\n".join(s)
