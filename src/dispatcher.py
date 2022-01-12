@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from os import tcsetpgrp
 from typing import Union
 
 from config import config
@@ -218,3 +219,30 @@ class Dispatcher:
             else:
                 s.append(p.description)
         return "\n".join(s)
+
+    def count_total_times(self, days=1) -> str:
+
+        bin = []
+
+        totals = {}
+
+        with open(config.SCHEDULE_FILE_PATH, "r", encoding="UTF8") as f:
+            for line in f.readlines():
+                bin.append(Pomodoro(line))
+
+        for p in bin:
+            if p.text in totals:
+                totals[p.text] = totals[p.text] + p.duration.seconds
+                continue
+            totals[p.text] = p.duration.seconds
+
+        txt = ""
+        total_time = 0
+        for key, value in totals.items():
+            t = (value / 3600) * days
+            total_time += t
+            txt += f"\n{key}: {t}"
+
+        txt += f"\n\ntotal: {total_time}\nsleep: {24 * days - total_time}"
+
+        return txt

@@ -1,9 +1,13 @@
 import random
 import re
 
+from cachetools import TTLCache, cached
+
 from config import config
 from log import log
 from notification import Notification
+
+cache = TTLCache(maxsize=100, ttl=86400)
 
 
 class Rest:
@@ -12,13 +16,12 @@ class Rest:
 
     def __init__(self, parent_pomodoro) -> None:
 
-        # self.rest_messages = self.load_rest_messages()
         self.rest_messages = self.load_rest_messages()
-
         self.parent_pomodoro = parent_pomodoro
 
+    @cached(cache)
     def load_rest_messages(self) -> None:
-        log("load_rest_messages")
+        # log("load_rest_messages", level="debug")
         messages = []
         with open(config.REST_MESSAGES_FILE_PATH, "r", encoding="UTF8") as f:
             lines = f.readlines()

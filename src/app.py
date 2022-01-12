@@ -84,6 +84,21 @@ def print_full_schedule(update: Update, context: CallbackContext):
     update.message.reply_text(s)
 
 
+def count_total_times(update: Update, context: CallbackContext):
+    log("count_total_times()", level="info")
+
+    try:
+        days = int(context.args[0])
+    except IndexError:
+        """if no value provided, assume it one day"""
+        days = 1
+    except ValueError:
+        update.message.reply_text("Only digits acceptable")
+        return
+
+    update.message.reply_text(dispatcher.count_total_times(days=days))
+
+
 def debug_command(update: Update = None, context: CallbackContext = None):
 
     log("debug_command()", level="debug")
@@ -143,6 +158,7 @@ commands.add(TelegramCommand("schedule", print_schedule, aliases=["day", "today"
 commands.add(TelegramCommand("fullschedule", print_full_schedule, aliases=["fullday", "full"], description="show extended today's schedule"))
 commands.add(TelegramCommand("reload", reload_schedule, description="reload schedule and calendar"))
 commands.add(TelegramCommand("debug", debug_command, description="debug action"))
+commands.add(TelegramCommand("total", count_total_times, description="count total times"))
 
 
 def show_commands_list(update: Update, context: CallbackContext) -> None:

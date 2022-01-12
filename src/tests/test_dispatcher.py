@@ -10,13 +10,13 @@ def test_parsing():
     ds = Dispatcher()
 
     p = ds.get_pomodoro("00:00")
-    assert p.fingerprint == "fingerprint 00:00 - 00:30 - free time"
+    assert p.fingerprint == "fingerprint 00:00 - 00:30 - wind down"
 
     p = ds.get_pomodoro("06:00")
     assert p == None
 
     p = ds.get_pomodoro("08:00")
-    assert p.fingerprint == "fingerprint 08:00 - 08:30 - morning"
+    assert p.fingerprint == "fingerprint 08:00 - 08:30 - morning routine"
 
     p = ds.get_pomodoro("23:00")
     assert p.fingerprint == "fingerprint 23:00 - 23:30 - free time"
@@ -44,7 +44,7 @@ def test_bad_input():
 def test_tick():
     ds = Dispatcher()
     ds.tick("00:00")
-    assert ds.active_pomodoro.fingerprint == "fingerprint 00:00 - 00:30 - free time"
+    assert ds.active_pomodoro.fingerprint == "fingerprint 00:00 - 00:30 - wind down"
 
 
 def test_many_ticks():
@@ -59,19 +59,15 @@ def test_many_ticks():
         now += step
 
         if now.minute == 40:
-            # log(now.minute)
             ds.get_schedule(united=True)
 
         if now.minute == 42:
-            # log(now.minute)
             ds.reload_schedule()
 
         if now.minute == 44:
-            # log(now.minute)
             ds.get_schedule(united=False)
 
         if now.minute == 44:
-            # log(now.minute)
             ds.get_schedule(united=True)
 
         ds.tick(now)
@@ -94,7 +90,7 @@ def test_print_schedule():
     log(txt)
     assert ("10:00 - 10:30 - code" in txt) is True
     assert ("16:00 - 17:00 - Return... (calendar event)" in txt) is True
-    assert ("00:30 - 01:00 - wind down" in txt) is True
+    assert ("00:00 - 00:30 - wind down" in txt) is True
 
 
 def test_print_united_pomodoros():
@@ -114,15 +110,12 @@ def test_print_united_pomodoros():
     log(txt)
     assert ("10:00 - code until 12:00" in txt) is True
     assert ("13:00 - Commute until 15:00 (calendar event)" in txt) is True
-    assert ("00:30 - wind down" in txt) is True
+    assert ("00:00 - wind down" in txt) is True
 
 
-"""
-def test_just_list_them():
+def test_count_total_times():
     ds = Dispatcher()
-    cp = ds.current_pomodoro()
-    ds.run_pomodoro(cp)
-
-    for p in ds.pomodoros:
-        print(p.extended_description)
-"""
+    output = ds.count_total_times()
+    assert ("morning routine: 2.0" in output) is True
+    assert ("exercise: 0.5" in output) is True
+    assert ("sleep: 7.5" in output) is True
