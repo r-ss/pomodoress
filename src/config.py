@@ -40,7 +40,7 @@ class config:
     TELEGRAM_ENABLE_SENDING = True
     TELEGRAM_TOKEN = str(os.environ.get("TELEGRAM_HTTP_TOKEN"))
     TELEGRAM_USER = str(os.environ.get("TELEGRAM_USERID"))
-    TELEGRAM_DELETE_NOTIFICATIONS = False  # after X seconds
+    TELEGRAM_DELETE_NOTIFICATIONS = 75  # after X seconds
 
     if TESTING_MODE:
         TELEGRAM_ENABLE_SENDING = False
@@ -48,15 +48,13 @@ class config:
     PAUSED = False
     SCHEDULE_FILE_PATH = f"{Path.cwd()}/storage/schedule.txt"
     REST_MESSAGES_FILE_PATH = f"{Path.cwd()}/storage/rest_messages.txt"
-    UNPRODUCTIVE_ACTIVITIES = ["free", "dinner", "netflix"]
+    UNPRODUCTIVE_ACTIVITIES = ["morning", "free", "dinner", "netflix"]
 
-    # Default Pomodoro and Rest duration, in minutes
+    # Default Pomodoro duration, minutes
     POMODORO_DURATION = 25
-    # REST_DURATION = 5
 
     # formats
     DATE_FORMAT_HUMAN: str = "%d.%m.%Y"
     DATETIME_FORMAT_TECHNICAL: str = "%Y-%m-%d %H:%M:%S"
     DATETIME_FORMAT_HUMAN: str = "%d.%m.%Y %H:%M"
-    # TIMEZONE_STRING = 'Europe/Moscow'
     TZ = pytz.timezone("Europe/Moscow")

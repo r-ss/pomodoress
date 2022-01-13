@@ -32,8 +32,6 @@ from log import log
 #                         if e.is_commute_event:
 #                             p.emoji = emojize(":automobile:")
 
-#     cp = ds.current_pomodoro()
-#     ds.run_pomodoro(cp)
 
 #     for p in ds.united_pomodoros:
 #         caret = "   "
@@ -68,8 +66,8 @@ def test_fake_calendar():
                     if e.is_commute_event:
                         p.emoji = emojize(":automobile:")
 
-    cp = ds.current_pomodoro()
-    ds.run_pomodoro(cp)
+    # cp = ds.current_pomodoro()
+    # ds.run_pomodoro(cp)
 
     txt = "test_fake_calendar:"
     for p in ds.united_pomodoros:

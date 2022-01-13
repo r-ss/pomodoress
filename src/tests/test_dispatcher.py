@@ -35,9 +35,8 @@ def test_parsing():
 
 
 def test_bad_input():
-    ds = Dispatcher()
     with pytest.raises(ValueError) as excinfo:
-        ds.parse_pomodoros("some bad input")
+        Dispatcher().parse_pomodoros("some bad input")
     assert str(excinfo.value) == "bad input string, cannot split to 4 items separated by comma"
 
 
@@ -50,72 +49,54 @@ def test_tick():
 def test_many_ticks():
     ds = Dispatcher()
 
-    start = config.TZ.localize(dateutil.parser.parse("16:00"))
-    end = config.TZ.localize(dateutil.parser.parse("21:00"))
+    start = config.TZ.localize(dateutil.parser.parse("7:00"))
+    end = config.TZ.localize(dateutil.parser.parse("23:00"))
     step = relativedelta(minutes=1)
 
     now = start
     while now < end:
         now += step
-
         if now.minute == 40:
             ds.get_schedule(united=True)
-
         if now.minute == 42:
             ds.reload_schedule()
-
         if now.minute == 44:
             ds.get_schedule(united=False)
-
         if now.minute == 44:
             ds.get_schedule(united=True)
-
         ds.tick(now)
 
 
 def test_print_schedule():
-    ds = Dispatcher()
-
-    cp = ds.current_pomodoro()
-    ds.run_pomodoro(cp)
-
     txt = "test_print_schedule:"
-    for p in ds.pomodoros:
+    for p in Dispatcher().pomodoros:
         caret = "   "
         if p.active:
             caret = ">> "
         line = f"\n{caret}{p.description}"
         txt += line
-
-    log(txt)
+    # log(txt)
     assert ("10:00 - 10:30 - code" in txt) is True
     assert ("16:00 - 17:00 - Return... (calendar event)" in txt) is True
     assert ("00:00 - 00:30 - wind down" in txt) is True
 
 
 def test_print_united_pomodoros():
-    ds = Dispatcher()
-
-    cp = ds.current_pomodoro()
-    ds.run_pomodoro(cp)
-
     txt = "test_print_united_pomodoros:"
-    for p in ds.united_pomodoros:
+    for p in Dispatcher().united_pomodoros:
         caret = "   "
         if p.active:
             caret = ">> "
         line = f"\n{caret}{p.readable_description}"
         txt += line
-
-    log(txt)
+    # log(txt)
     assert ("10:00 - code until 12:00" in txt) is True
     assert ("13:00 - Commute until 15:00 (calendar event)" in txt) is True
     assert ("00:00 - wind down" in txt) is True
 
 
 def test_count_total_times():
-    ds = Dispatcher()
-    output = ds.count_total_times()
+    output = Dispatcher().count_total_times()
     assert ("morning routine: 2.0" in output) is True
     assert ("exercise: 0.5" in output) is True
     assert ("sleep: 7.5" in output) is True
