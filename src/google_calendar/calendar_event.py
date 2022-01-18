@@ -8,10 +8,11 @@ from dateutil.relativedelta import relativedelta
 
 
 class CalendarEvent:
-    def __init__(self, start, end, text, is_commute_event=False) -> None:
+    def __init__(self, start, end, text, is_commute_event=False, rest_allowed=False) -> None:
         self.start = start
         self.end = end
         self.is_commute_event = is_commute_event
+        self.rest_allowed = rest_allowed
 
         if type(self.start) == str:
             self.start = dateutil.parser.parse(self.start)
@@ -60,7 +61,7 @@ class CalendarDayHelper:
         if parse:
             self.parse_event_text(event)
 
-    def parse_event_text(self, event):
+    def parse_event_text(self, event: CalendarEvent):
         def get_delta(research):
             if research["TypeNumber"]:
                 num = int(research["TypeNumber"])
@@ -96,6 +97,15 @@ class CalendarDayHelper:
             c = CalendarEvent(start, end, "Return", is_commute_event=True)
             event.text = re.sub(",?\sback\s\d{1,2}(:?\d{1,2})?", "", event.text)
             self.add_event(c, parse=False)
+
+        if "focus" in event.text:
+            # start = event.start
+            # end = event.end
+            event.text = re.sub(",?\sfocus?", "", event.text)
+            # c = CalendarEvent(start, end, text, rest_allowed=True)
+            # self.add_event(c, parse=False)
+            event.rest_allowed = True
+            
 
     # def get_events(self):
     #     return self.events

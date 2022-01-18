@@ -34,12 +34,15 @@ class Pomodoro:
         self.reformatted_text = self.text
         self.notified = False  # marks when notification sends to user
 
+        self.rest_allowed = True
+
         # Rest object is in response for 5-minutes resting time window when pomodoros 25 minutes passes
         self.rest = Rest(self)  # pass this pomodoro as parent_pomodoro for Rest object
 
         # self.duration = config.POMODORO_DURATION  # default pomodoro duration 25 minutes
         self.previous = None  # previous Pomodoro in queue
         self.next = None  # next Pomodoro in queue
+
 
     @property
     def description(self) -> str:
@@ -84,6 +87,10 @@ class Pomodoro:
         if any(w in self.text for w in config.UNPRODUCTIVE_ACTIVITIES) and any(z in prevtext for z in config.UNPRODUCTIVE_ACTIVITIES):
             self.rest_started = True
             return
+
+        if self.previous:
+            if self.previous.text == self.text and not self.rest_allowed:
+                return
 
         _ = Notification(f"{self.emoji} {self.start.strftime('%H:%M')} - {self.formtext}")
         self.notified = True

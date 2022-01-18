@@ -34,6 +34,8 @@ class Rest:
 
     @property
     def next_announce(self) -> str:
+        if self.parent_pomodoro.type == "calendar":
+            return ""
         if self.parent_pomodoro.next:
             if self.parent_pomodoro.next.text == self.parent_pomodoro.text:
                 return ""
@@ -42,6 +44,9 @@ class Rest:
 
     def run(self) -> None:
         """fires when pomodoros' 25 minutes ends and rest time for 5 minutes starts"""
+
+        if not self.parent_pomodoro.rest_allowed:
+            return
 
         if self.active:
             return

@@ -66,6 +66,10 @@ def test_many_ticks():
             ds.get_schedule(united=True)
         ds.tick(now)
 
+    # log(ds.pomodoros)
+    # for p in ds.pomodoros:
+    #     log(p)
+
 
 def test_print_schedule():
     txt = "test_print_schedule:"
@@ -75,9 +79,9 @@ def test_print_schedule():
             caret = ">> "
         line = f"\n{caret}{p.description}"
         txt += line
-    # log(txt)
+    log(txt)
     assert ("10:00 - 10:30 - code" in txt) is True
-    assert ("16:00 - 17:00 - Return... (calendar event)" in txt) is True
+    assert ("16:00 - 16:30 - Return until 17:00" in txt) is True
     assert ("00:00 - 00:30 - wind down" in txt) is True
 
 

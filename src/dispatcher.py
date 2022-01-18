@@ -77,9 +77,10 @@ class Dispatcher:
                         # log(f"p.start: {p.start}", level="debug")
                         # log(f"p.end: {p.end}", level="debug")
 
-                        c = PomodoroCalendarEvent(e.start, e.end, e.text, is_commute_event=e.is_commute_event)
+                        # c = PomodoroCalendarEvent(e.start, e.end, e.text, is_commute_event=e.is_commute_event, rest_allowed=e.rest_allowed)
+                        c = PomodoroCalendarEvent(p.start, p.end, e.text, is_commute_event=e.is_commute_event, rest_allowed=e.rest_allowed)
 
-                        log(f"replacing pomodoro: {p.description} with {c.description}", level="debug")
+                        # log(f"replacing pomodoro: {p.description} with {c.description}, rest allowed: {c.rest_allowed}", level="debug")
 
                         self.replace_pomodoro(p, c)
 
@@ -91,6 +92,9 @@ class Dispatcher:
         """ filling .next value in every pomodoro """
         for i in range(len(self.pomodoros) - 1):
             self.pomodoros[i].next = self.pomodoros[i + 1]
+
+        for i in range(len(self.pomodoros)):
+            self.pomodoros[i].id = i
 
     def parse_pomodoros(self, raw_lines) -> None:
         self.pomodoros = []
@@ -140,10 +144,13 @@ class Dispatcher:
 
         if self.active_pomodoro:
             active_time = time - self.active_pomodoro.start
-            log(f"tick active_pomodoro: {self.active_pomodoro}, active_time: {active_time}", level="debug")
+            # log(f"tick active_pomodoro: {self.active_pomodoro}, active_time: {active_time}", level="debug")
             if active_time >= timedelta(minutes=25):
                 if self.active_pomodoro.next:
                     if self.active_pomodoro.type == "generic":
+                        self.active_pomodoro.rest.run()
+                    elif self.active_pomodoro.type == "calendar":
+                        # self.active_pomodoro.decide_to_rest(active_time)
                         self.active_pomodoro.rest.run()
 
         p = self.get_pomodoro(time)
