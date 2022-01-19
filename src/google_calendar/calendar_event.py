@@ -47,7 +47,6 @@ class CalendarEvent:
 class CalendarDayHelper:
     def __init__(self) -> None:
         self.events = []
-        # self.have_allday_events = None
 
     @property
     def have_allday_events(self):
@@ -91,7 +90,7 @@ class CalendarDayHelper:
                     event.text,
                 ).groupdict()
             )
-            num = int(re.search("back\s(\d)", event.text)[1])
+            # num = int(re.search("back\s(\d)", event.text)[1])
             start = event.end
             end = event.end + delta
             c = CalendarEvent(start, end, "Return", is_commute_event=True)
@@ -99,16 +98,8 @@ class CalendarDayHelper:
             self.add_event(c, parse=False)
 
         if "focus" in event.text:
-            # start = event.start
-            # end = event.end
             event.text = re.sub(",?\sfocus?", "", event.text)
-            # c = CalendarEvent(start, end, text, rest_allowed=True)
-            # self.add_event(c, parse=False)
             event.rest_allowed = True
-            
-
-    # def get_events(self):
-    #     return self.events
 
     def __iter__(self):
         return iter(self.events)

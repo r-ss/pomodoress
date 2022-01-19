@@ -23,7 +23,6 @@ class Notification:
         self.thread = None
 
         self.send()
-        # return self
 
     def delete(self) -> None:
         log("deleting notification", level="debug")

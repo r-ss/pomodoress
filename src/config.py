@@ -40,7 +40,7 @@ class config:
     TELEGRAM_ENABLE_SENDING = True
     TELEGRAM_TOKEN = str(os.environ.get("TELEGRAM_HTTP_TOKEN"))
     TELEGRAM_USER = str(os.environ.get("TELEGRAM_USERID"))
-    TELEGRAM_DELETE_NOTIFICATIONS = 75  # after X seconds
+    TELEGRAM_DELETE_NOTIFICATIONS = None  # 75  # after X seconds
 
     if TESTING_MODE:
         TELEGRAM_ENABLE_SENDING = False

@@ -97,7 +97,7 @@ class GoogleCalendar:
 
         cal_day_helper.add_event(CalendarEvent(today, tomorrow, "All day some-event"))
         cal_day_helper.add_event(CalendarEvent(today, tomorrow, "Another delivery"))
-        cal_day_helper.add_event(CalendarEvent(f"{today}T15:00:00+03:00",f"{today}T16:00:00+03:00","Test calendar event commute 2:00, back 2"))
-        cal_day_helper.add_event(CalendarEvent(f"{today}T19:00:00+03:00", f"{today}T22:00:00+03:00", "Formula-1, focus"))
+        cal_day_helper.add_event(CalendarEvent(f"{today}T15:00:00+03:00", f"{today}T16:00:00+03:00", "Test calendar event commute 2:00, back 2"))
+        cal_day_helper.add_event(CalendarEvent(f"{today}T19:00:00+03:00", f"{today}T21:00:00+03:00", "Formula-1, focus"))
 
         return cal_day_helper

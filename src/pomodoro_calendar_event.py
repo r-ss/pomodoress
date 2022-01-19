@@ -43,10 +43,8 @@ class PomodoroCalendarEvent(Pomodoro):
         self.rest_allowed = rest_allowed
         self.rest = Rest(self)  # pass this pomodoro as parent_pomodoro for Rest object
 
-
         self.previous = None  # previous Pomodoro in queue
         self.next = None  # next Pomodoro in queue
-
 
     @property
     def description(self) -> str:
@@ -59,23 +57,6 @@ class PomodoroCalendarEvent(Pomodoro):
     @property
     def extended_description(self) -> str:
         return super().extended_description + " (calendar event)"
-
-    # def decide_to_rest(self, active_time):
-        # if not self.rest_allowed:
-            # return
-
-        # if active_time in []
-        # a = int(active_time.total_seconds() / 60)
-        # t = int(self.duration.total_seconds() / 60)
-
-        # if a in [25, 55, 85, 115, 145, 175, 205, 235]:
-            # log(f'decide, active time: {a}, {t}')
-            # self.rest.run()
-        # if a in [25+5, 55+5, 85+5, 115+5, 145+5, 175+5, 205+5, 235+5]:
-            # self.rest.active = False
-            # pass
-
-        
 
     def start_routine(self) -> None:
 
