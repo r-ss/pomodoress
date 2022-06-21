@@ -57,4 +57,5 @@ class config:
     DATE_FORMAT_HUMAN: str = "%d.%m.%Y"
     DATETIME_FORMAT_TECHNICAL: str = "%Y-%m-%d %H:%M:%S"
     DATETIME_FORMAT_HUMAN: str = "%d.%m.%Y %H:%M"
-    TZ = pytz.timezone("Europe/Moscow")
+    TZ = pytz.timezone("Europe/Madrid")
+    # TZ = pytz.timezone("Europe/Moscow")
