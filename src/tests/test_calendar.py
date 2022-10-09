@@ -1,4 +1,4 @@
-from datetime import datetime
+# from datetime import datetime
 
 from config import config
 from dispatcher import Dispatcher
@@ -79,4 +79,4 @@ def test_fake_calendar():
         txt += line
 
     log(txt)
-    assert ("13:00 - 13:30 - Commute (was code)" in txt) is True
+    assert ("13:00 - 13:30 - Commute (was free time)" in txt) is True

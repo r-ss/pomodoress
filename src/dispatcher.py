@@ -160,7 +160,7 @@ class Dispatcher:
 
     def check_and_fire(self, pomodoro: Union[Pomodoro, PomodoroCalendarEvent]) -> None:
         log(f"> check_and_fire for {pomodoro}", level="debug")
-        if not pomodoro.active:
+        if pomodoro and not pomodoro.active:
             self.run_pomodoro(pomodoro)
 
     @property
