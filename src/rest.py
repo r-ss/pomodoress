@@ -58,7 +58,7 @@ class Rest:
             return
 
         # also not send rest announces before 10:00
-        if self.parent_pomodoro.start.hour < 10:
+        if self.parent_pomodoro.start.hour < 9:
             self.active = True
             return
 
